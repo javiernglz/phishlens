@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>PhishLens — UI Concepts</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f0f13;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #e2e8f0;
+      padding: 40px 32px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 36px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 1100px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .label span {
+      display: inline-block;
+      margin-left: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #64748b;
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .label.fav span {
+      background: #0f2a1a;
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    /* ─── MOCKUP SHELL ─── */
+    .mockup {
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      width: 100%;
+      aspect-ratio: 16/10;
+      position: relative;
+      box-shadow: 0 0 0 1px #1e293b, 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    /* ──────────────────────────────────────────
+       OPCIÓN 1 — COMMAND BAR
+    ────────────────────────────────────────── */
+    .o1-bar {
+      height: 13%;
+      background: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px;
+      border-bottom: 1px solid #1e3a4a;
+    }
+    .o1-logo {
+      font-size: 6px;
+      font-weight: 700;
+      color: #22d3ee;
+      letter-spacing: 0.05em;
+      margin-right: 4px;
+    }
+    .pill {
+      height: 10px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5px;
+      font-weight: 600;
+      padding: 0 5px;
+      white-space: nowrap;
+    }
+    .pill-outline {
+      border: 1px solid #334155;
+      color: #94a3b8;
+      background: transparent;
+    }
+    .pill-active {
+      background: #164e63;
+      border: 1px solid #22d3ee;
+      color: #22d3ee;
+    }
+    .pill-red {
+      background: #7f1d1d;
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      margin-left: auto;
+    }
+    .dot-sep { width: 1px; height: 8px; background: #1e293b; margin: 0 2px; }
+    .o1-body {
+      height: 87%;
+      background: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px;
+    }
+    .email-chrome {
+      width: 90%;
+      max-width: 220px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+    .email-header-bar {
+      background: #1a73e8;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      gap: 4px;
+    }
+    .email-header-bar span {
+      font-size: 5.5px;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .email-nav {
+      display: flex;
+      align-items: center;
+      height: 12px;
+      padding: 0 6px;
+      gap: 3px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .email-nav .dot { width: 5px; height: 5px; border-radius: 50%; }
+    .email-nav .line { height: 3px; border-radius: 2px; background: #e5e7eb; flex: 1; }
+    .email-body-area {
+      padding: 5px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .email-subject { height: 4px; background: #374151; border-radius: 2px; width: 70%; }
+    .email-from { height: 3px; background: #d1fae5; border-radius: 2px; width: 50%; }
+    .email-line { height: 2.5px; background: #e5e7eb; border-radius: 2px; }
+    .email-link-fake { height: 3px; background: #bfdbfe; border-radius: 2px; width: 60%; }
+
+    /* ──────────────────────────────────────────
+       OPCIÓN 2 — SIDEBAR RETRAÍBLE
+    ────────────────────────────────────────── */
+    .o2-wrap { display: flex; height: 100%; }
+    .o2-sidebar {
+      width: 28%;
+      background: #0d1117;
+      border-right: 1px solid #1e3a4a;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 5px;
+      gap: 4px;
+    }
+    .o2-logo {
+      font-size: 6px;
+      font-weight: 700;
+      color: #22d3ee;
+      letter-spacing: 0.08em;
+      padding: 2px 3px 4px;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 2px;
+    }
+    .scenario-card {
+      border-radius: 3px;
+      padding: 4px 5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .scenario-card.active {
+      background: #0c2a38;
+      border-color: #22d3ee;
+    }
+    .scenario-card .sc-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .scenario-card .sc-text { display: flex; flex-direction: column; gap: 1px; }
+    .scenario-card .sc-name { height: 3px; border-radius: 1px; }
+    .scenario-card .sc-sub { height: 2px; border-radius: 1px; background: #1e293b; width: 80%; }
+    .level-row {
+      display: flex;
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .lvl {
+      flex: 1;
+      height: 9px;
+      border-radius: 2px;
+      font-size: 4.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+    }
+    .lvl.easy { background: #052e16; border-color: #16a34a; color: #4ade80; }
+    .lvl.med { background: #431407; border-color: #ea580c; color: #fb923c; }
+    .lvl.hard { background: #4c0519; border-color: #e11d48; color: #f43f5e; }
+    .reveal-btn {
+      margin-top: auto;
+      background: #7f1d1d;
+      border: 1px solid #ef4444;
+      border-radius: 3px;
+      height: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5px;
+      font-weight: 700;
+      color: #fca5a5;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .o2-main {
+      flex: 1;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+    }
+
+    /* collapsed state */
+    .o2-sidebar-collapsed {
+      width: 8%;
+      background: #0d1117;
+      border-right: 1px solid #1e3a4a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0;
+      gap: 6px;
+    }
+    .collapse-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .collapse-icon::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-left: 2px solid #22d3ee;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+    }
+    .fab {
+      margin-top: auto;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #7f1d1d;
+      border: 1px solid #ef4444;
+    }
+
+    /* ──────────────────────────────────────────
+       OPCIÓN 3 — DUAL MODE
+    ────────────────────────────────────────── */
+    .o3-control {
+      height: 100%;
+      background: #0d1117;
+      display: flex;
+      flex-direction: column;
+      padding: 6px;
+      gap: 4px;
+    }
+    .o3-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .o3-logo {
+      font-size: 6px;
+      font-weight: 700;
+      color: #22d3ee;
+      letter-spacing: 0.08em;
+    }
+    .mode-toggle {
+      display: flex;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mode-toggle span {
+      font-size: 4.5px;
+      padding: 2px 5px;
+      color: #64748b;
+    }
+    .mode-toggle span.active {
+      background: #1e293b;
+      color: #22d3ee;
+    }
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      flex: 1;
+    }
+    .sc-cell {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px;
+      cursor: pointer;
+    }
+    .sc-cell.selected {
+      border-color: #22d3ee;
+      background: #0c2a38;
+    }
+    .sc-cell .ic {
+      font-size: 9px;
+      line-height: 1;
+    }
+    .sc-cell .sc-lbl {
+      font-size: 4px;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .sc-cell .sc-preview {
+      width: 100%;
+      height: 18px;
+      background: #fff;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .launch-btn {
+      height: 14px;
+      background: linear-gradient(90deg, #0f766e, #0e7490);
+      border: 1px solid #22d3ee;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5px;
+      font-weight: 700;
+      color: #a5f3fc;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Stage view overlay */
+    .o3-stage {
+      height: 100%;
+      background: #f3f4f6;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stage-label {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      font-size: 4px;
+      background: #0d1117;
+      color: #22d3ee;
+      padding: 2px 5px;
+      border-radius: 2px;
+      border: 1px solid #1e3a4a;
+      letter-spacing: 0.08em;
+    }
+
+    /* X-Ray overlay */
+    .xray-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,20,0.75);
+      backdrop-filter: blur(1px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .xray-chip {
+      border: 1px solid #ef4444;
+      border-radius: 2px;
+      padding: 2px 5px;
+      font-size: 5px;
+      font-weight: 700;
+      color: #fca5a5;
+      background: rgba(127,29,29,0.7);
+      box-shadow: 0 0 8px rgba(239,68,68,0.5);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* captions */
+    .caption {
+      font-size: 10px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .caption strong { color: #94a3b8; }
+
+    /* Sub-mockups for collapsed/reveal states */
+    .sub-row {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .sub-mockup {
+      flex: 1;
+      border: 1px solid #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #fff;
+      aspect-ratio: 16/10;
+      position: relative;
+      box-shadow: 0 0 0 1px #1e293b, 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .sub-label {
+      font-size: 8px;
+      color: #475569;
+      text-align: center;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+    .sub-wrap { flex: 1; display: flex; flex-direction: column; }
+
+    .arrow {
+      align-self: center;
+      font-size: 10px;
+      color: #334155;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>PhishLens — UI Concepts · Wireframes</h1>
+
+  <div class="grid">
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- OPCIÓN 1: COMMAND BAR              -->
+    <!-- ═══════════════════════════════════ -->
+    <div class="card">
+      <div class="label">Opción 1 — Command Bar <span>barra fija</span></div>
+
+      <!-- Main mockup -->
+      <div class="mockup">
+        <div class="o1-bar">
+          <div class="o1-logo">PL</div>
+          <div class="pill pill-active">Email</div>
+          <div class="pill pill-outline">SMS</div>
+          <div class="pill pill-outline">Archivo</div>
+          <div class="dot-sep"></div>
+          <div class="pill pill-active" style="background:#052e16;border-color:#16a34a;color:#4ade80;">Fácil</div>
+          <div class="pill pill-outline">Medio</div>
+          <div class="pill pill-outline">Difícil</div>
+          <div class="pill pill-red">⬛ Revelar X-Ray</div>
+        </div>
+        <div class="o1-body">
+          <div class="email-chrome">
+            <div class="email-header-bar">
+              <span>Gmail</span>
+            </div>
+            <div class="email-nav">
+              <div class="dot" style="background:#ea4335"></div>
+              <div class="dot" style="background:#fbbc04"></div>
+              <div class="dot" style="background:#34a853"></div>
+              <div class="line"></div>
+            </div>
+            <div class="email-body-area">
+              <div class="email-subject"></div>
+              <div class="email-from" style="background:#fee2e2;"></div>
+              <div style="height:3px"></div>
+              <div class="email-line" style="width:95%"></div>
+              <div class="email-line" style="width:80%"></div>
+              <div class="email-link-fake"></div>
+              <div class="email-line" style="width:60%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- X-Ray state -->
+      <div class="sub-row">
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o1-bar" style="font-size:4px;">
+              <div class="o1-logo">PL</div>
+              <div class="pill pill-active" style="font-size:4px;height:8px;">Email</div>
+              <div class="pill pill-outline" style="font-size:4px;height:8px;">SMS</div>
+              <div class="pill pill-red" style="font-size:4px;height:8px;margin-left:auto;">Revelar</div>
+            </div>
+            <div class="o1-body" style="padding:4px;">
+              <div class="email-chrome" style="max-width:none;width:85%;">
+                <div class="email-header-bar" style="height:10px;"><span style="font-size:4px;">Gmail</span></div>
+                <div class="email-body-area" style="gap:2px;padding:3px 4px;">
+                  <div class="email-subject" style="height:3px;"></div>
+                  <div class="email-from" style="background:#fee2e2;height:2px;"></div>
+                  <div class="email-line"></div>
+                  <div class="email-link-fake" style="height:2px;"></div>
+                </div>
+              </div>
+              <div class="xray-overlay">
+                <div class="xray-chip">X-Ray activo</div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">modo revelar</div>
+        </div>
+      </div>
+
+      <p class="caption">Barra siempre visible arriba. <strong>90% de pantalla</strong> para la simulación. Controles comprimidos pero siempre accesibles.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- OPCIÓN 2: SIDEBAR RETRAÍBLE ⭐     -->
+    <!-- ═══════════════════════════════════ -->
+    <div class="card">
+      <div class="label fav">Opción 2 — Sidebar Retraíble <span>⭐ favorita</span></div>
+
+      <!-- Expanded state -->
+      <div class="sub-row">
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o2-wrap">
+              <div class="o2-sidebar">
+                <div class="o2-logo">PhishLens</div>
+                <div class="scenario-card active">
+                  <div class="sc-icon" style="background:#1d4ed8;"></div>
+                  <div class="sc-text">
+                    <div class="sc-name" style="background:#3b82f6;width:80%;height:3px;border-radius:1px;"></div>
+                    <div class="sc-sub"></div>
+                  </div>
+                </div>
+                <div class="scenario-card">
+                  <div class="sc-icon" style="background:#065f46;"></div>
+                  <div class="sc-text">
+                    <div class="sc-name" style="background:#1e293b;width:70%;height:3px;border-radius:1px;"></div>
+                    <div class="sc-sub"></div>
+                  </div>
+                </div>
+                <div class="scenario-card">
+                  <div class="sc-icon" style="background:#7c3aed;"></div>
+                  <div class="sc-text">
+                    <div class="sc-name" style="background:#1e293b;width:60%;height:3px;border-radius:1px;"></div>
+                    <div class="sc-sub"></div>
+                  </div>
+                </div>
+                <div class="level-row">
+                  <div class="lvl easy">F</div>
+                  <div class="lvl med">M</div>
+                  <div class="lvl hard">D</div>
+                </div>
+                <div class="reveal-btn">▶ Revelar</div>
+              </div>
+              <div class="o2-main">
+                <div class="email-chrome" style="width:85%;max-width:none;">
+                  <div class="email-header-bar" style="height:10px;"><span style="font-size:4px;">Gmail</span></div>
+                  <div class="email-body-area" style="gap:2px;padding:3px 4px;">
+                    <div class="email-subject" style="height:3px;"></div>
+                    <div class="email-from" style="background:#fee2e2;height:2px;"></div>
+                    <div class="email-line"></div>
+                    <div class="email-link-fake" style="height:2px;"></div>
+                    <div class="email-line" style="width:50%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">panel abierto</div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- Collapsed state -->
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o2-wrap">
+              <div class="o2-sidebar-collapsed">
+                <div class="collapse-icon"></div>
+                <div style="width:8px;height:1px;background:#1e293b;"></div>
+              </div>
+              <div class="o2-main" style="padding:4px;">
+                <div class="email-chrome" style="width:92%;max-width:none;">
+                  <div class="email-header-bar" style="height:10px;"><span style="font-size:4px;">Gmail</span></div>
+                  <div class="email-body-area" style="gap:2px;padding:3px 4px;">
+                    <div class="email-subject" style="height:3px;"></div>
+                    <div class="email-from" style="background:#fee2e2;height:2px;"></div>
+                    <div class="email-line"></div>
+                    <div class="email-link-fake" style="height:2px;"></div>
+                    <div class="email-line" style="width:50%"></div>
+                  </div>
+                </div>
+                <div class="fab"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">panel colapsado</div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- X-Ray state -->
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o2-wrap">
+              <div class="o2-sidebar-collapsed" style="width:6%"></div>
+              <div class="o2-main" style="padding:4px;position:relative;">
+                <div class="email-chrome" style="width:92%;max-width:none;">
+                  <div class="email-header-bar" style="height:10px;"><span style="font-size:4px;">Gmail</span></div>
+                  <div class="email-body-area" style="gap:2px;padding:3px 4px;">
+                    <div class="email-subject" style="height:3px;"></div>
+                    <div class="email-from" style="background:#fee2e2;height:2px;"></div>
+                    <div class="email-line"></div>
+                    <div class="email-link-fake" style="height:2px;"></div>
+                  </div>
+                </div>
+                <div class="xray-overlay" style="inset:0;">
+                  <div class="xray-chip">X-Ray activo</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">X-Ray reveal</div>
+        </div>
+      </div>
+
+      <p class="caption">El sidebar se colapsa con un clic. El presentador abre para preparar, colapsa para mostrar. <strong>Flujo natural sin saltar de pantalla.</strong></p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- OPCIÓN 3: DUAL MODE                -->
+    <!-- ═══════════════════════════════════ -->
+    <div class="card">
+      <div class="label">Opción 3 — Dual Mode <span>2 vistas</span></div>
+
+      <!-- Control Room -->
+      <div class="sub-row">
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o3-control">
+              <div class="o3-topbar">
+                <div class="o3-logo">PhishLens</div>
+                <div class="mode-toggle">
+                  <span class="active">Control</span>
+                  <span>Stage</span>
+                </div>
+              </div>
+              <div class="scenario-grid">
+                <div class="sc-cell selected">
+                  <div class="ic">📧</div>
+                  <div class="sc-lbl">Email</div>
+                  <div class="sc-preview">
+                    <div style="background:#1a73e8;height:4px;"></div>
+                    <div style="padding:2px;display:flex;flex-direction:column;gap:1px;">
+                      <div style="height:2px;background:#e5e7eb;border-radius:1px;width:80%"></div>
+                      <div style="height:2px;background:#fecaca;border-radius:1px;width:50%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="sc-cell">
+                  <div class="ic">💬</div>
+                  <div class="sc-lbl">SMS</div>
+                  <div class="sc-preview">
+                    <div style="background:#1c1c1e;height:4px;"></div>
+                    <div style="padding:2px;background:#1c1c1e;height:calc(100% - 4px);"></div>
+                  </div>
+                </div>
+                <div class="sc-cell">
+                  <div class="ic">📁</div>
+                  <div class="sc-lbl">Archivo</div>
+                  <div class="sc-preview">
+                    <div style="background:#e5e7eb;height:4px;"></div>
+                    <div style="padding:2px;display:flex;align-items:center;justify-content:center;height:calc(100% - 4px);">
+                      <div style="width:8px;height:10px;background:#ef4444;border-radius:1px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="level-row">
+                <div class="lvl easy" style="height:8px;font-size:4px;">Fácil</div>
+                <div class="lvl med" style="height:8px;font-size:4px;">Medio</div>
+                <div class="lvl hard" style="height:8px;font-size:4px;">Difícil</div>
+              </div>
+              <div class="launch-btn">▶ Lanzar en Stage</div>
+            </div>
+          </div>
+          <div class="sub-label">Control Room</div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- Stage view -->
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o3-stage">
+              <div class="stage-label">STAGE MODE</div>
+              <div class="email-chrome" style="width:80%;max-width:none;">
+                <div class="email-header-bar" style="height:12px;"><span style="font-size:5px;">Gmail</span></div>
+                <div class="email-nav" style="height:10px;"></div>
+                <div class="email-body-area" style="gap:2.5px;padding:4px 5px;">
+                  <div class="email-subject" style="height:3px;"></div>
+                  <div class="email-from" style="background:#fee2e2;height:2.5px;"></div>
+                  <div class="email-line"></div>
+                  <div class="email-link-fake"></div>
+                  <div class="email-line" style="width:40%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">Stage (pestaña proyectada)</div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- X-Ray state -->
+        <div class="sub-wrap">
+          <div class="sub-mockup">
+            <div class="o3-stage">
+              <div class="email-chrome" style="width:80%;max-width:none;">
+                <div class="email-header-bar" style="height:12px;"><span style="font-size:5px;">Gmail</span></div>
+                <div class="email-body-area" style="gap:2.5px;padding:4px 5px;">
+                  <div class="email-subject" style="height:3px;"></div>
+                  <div class="email-from" style="background:#fee2e2;height:2.5px;"></div>
+                  <div class="email-line"></div>
+                  <div class="email-link-fake"></div>
+                </div>
+              </div>
+              <div class="xray-overlay">
+                <div class="xray-chip">X-Ray activo</div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-label">X-Ray reveal</div>
+        </div>
+      </div>
+
+      <p class="caption">Dos vistas: Control Room (cyber) y Stage (simulación pura). <strong>Ideal con 2 monitores.</strong> En un solo monitor requiere alternar pestañas.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
