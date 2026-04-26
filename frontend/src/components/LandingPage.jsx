@@ -1,4 +1,6 @@
 import { ArrowRight, Mail, MessageCircle, FolderOpen } from 'lucide-react'
+import { HookIcon } from './ui/PhishLensLogo'
+import { ALL_SCENARIOS } from '../data'
 
 function GithubIcon({ size = 16 }) {
   return (
@@ -118,7 +120,7 @@ export function LandingPage({ onStart }) {
       <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#e0f2fe', border: '1px solid #bae6fd' }}>
-            <span className="text-[10px] font-black text-cyan-600">PL</span>
+            <HookIcon size={18} color="#0891b2" strokeWidth={1.8} />
           </div>
           <span className="text-sm font-bold text-slate-800 tracking-tight">PhishLens</span>
         </div>
@@ -165,7 +167,7 @@ export function LandingPage({ onStart }) {
       <section className="bg-slate-50 border-y border-slate-100">
         <div className="max-w-6xl mx-auto px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: '18', label: 'Escenarios' },
+            { n: ALL_SCENARIOS.length, label: 'Escenarios' },
             { n: '3',  label: 'Módulos' },
             { n: '50%', label: 'Son legítimos' },
             { n: '3',  label: 'Niveles de dificultad' },

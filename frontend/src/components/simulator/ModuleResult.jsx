@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 const TIERS = [
   { min: 1.0,  label: '¡Sin fisuras!',   sub: 'No te engañaron ni una sola vez.',          color: '#22d3ee' },
   { min: 0.8,  label: '¡Muy bien!',       sub: 'Casi a prueba de phishing.',                color: '#34d399' },
@@ -10,7 +12,12 @@ function ScoreRing({ correct, total }) {
   const tier = TIERS.find((t) => ratio >= t.min) ?? TIERS[TIERS.length - 1]
   const r = 52
   const circ = 2 * Math.PI * r
-  const offset = circ * (1 - ratio)
+  const [offset, setOffset] = useState(circ)
+
+  useEffect(() => {
+    const t = setTimeout(() => setOffset(circ * (1 - ratio)), 80)
+    return () => clearTimeout(t)
+  }, [circ, ratio])
 
   return (
     <div className="relative w-36 h-36 mx-auto mb-7">

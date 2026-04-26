@@ -119,22 +119,30 @@ export function XRayOverlay({ stageRef, scenario, activeHotspotId, onHotspotClic
             </div>
 
             {/* Tooltip on click */}
-            {isActive && (
-              <div
-                className="absolute z-10 w-72 rounded-xl border p-4 shadow-2xl"
-                style={{
-                  top: hp.top + hp.height + PAD + 8,
-                  left: Math.max(8, Math.min(hp.left - PAD, (stageRef.current?.offsetWidth ?? 800) - 296)),
-                  background: '#0d1117',
-                  borderColor: tooltipBorder,
-                }}
-              >
-                <p className="text-[11px] font-bold mb-1.5" style={{ color: tooltipTitle }}>
-                  {hp.label}
-                </p>
-                <p className="text-xs text-slate-300 leading-relaxed">{hp.explanation}</p>
-              </div>
-            )}
+            {isActive && (() => {
+              const stageW = stageRef.current?.offsetWidth ?? 800
+              const stageH = stageRef.current?.offsetHeight ?? 600
+              const tooltipH = 130
+              const belowTop = hp.top + hp.height + PAD + 8
+              const aboveTop = hp.top - PAD - 8 - tooltipH
+              const fitsBelow = belowTop + tooltipH < stageH
+              return (
+                <div
+                  className="absolute z-10 w-72 rounded-xl border p-4 shadow-2xl"
+                  style={{
+                    top: fitsBelow ? belowTop : Math.max(8, aboveTop),
+                    left: Math.max(8, Math.min(hp.left - PAD, stageW - 296)),
+                    background: '#0d1117',
+                    borderColor: tooltipBorder,
+                  }}
+                >
+                  <p className="text-[11px] font-bold mb-1.5" style={{ color: tooltipTitle }}>
+                    {hp.label}
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed">{hp.explanation}</p>
+                </div>
+              )
+            })()}
           </div>
         )
       })}

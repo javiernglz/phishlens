@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Mail, MessageCircle, FolderOpen, RotateCcw } from 'lucide-react'
 import { ScenarioCard } from '../ui/ScenarioCard'
+import { HookIcon } from '../ui/PhishLensLogo'
 import { ALL_SCENARIOS, MODULES } from '../../data'
 
 const MODULE_ICONS = { email: Mail, sms: MessageCircle, file: FolderOpen }
@@ -97,7 +98,7 @@ export function Sidebar({
           className="flex items-center gap-2 hover:opacity-70 transition-opacity"
         >
           <div className="w-6 h-6 rounded bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
-            <span className="text-[9px] font-black text-cyan-400">PL</span>
+            <HookIcon size={14} color="#22d3ee" strokeWidth={1.8} />
           </div>
           <span className="text-sm font-bold text-slate-200 tracking-tight">PhishLens</span>
         </button>

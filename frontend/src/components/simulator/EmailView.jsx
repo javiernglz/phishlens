@@ -169,9 +169,9 @@ export function EmailView({ scenario }) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
+                <div id="hs-sender" className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-gray-800 text-sm">{content.fromDisplay}</span>
-                  <span id="hs-sender" className="text-gray-500 text-xs">
+                  <span className="text-gray-500 text-xs">
                     &lt;{content.fromEmail}&gt;
                   </span>
                 </div>
