@@ -21,7 +21,7 @@ function EmptyState() {
   )
 }
 
-function VotingBar({ scenario, answer, onVote, onNext, hasNext }) {
+function VotingBar({ scenario, answer, onVote, onNext, hasNext, isModuleComplete, onShowResults }) {
   const isAnswered = answer !== undefined
   const scenarioIsPhishing = scenario.isPhishing !== false
   const isCorrect = isAnswered && (answer === 'phishing') === scenarioIsPhishing
@@ -49,14 +49,21 @@ function VotingBar({ scenario, answer, onVote, onNext, hasNext }) {
             {msg}
           </span>
         </div>
-        {hasNext && (
+        {isModuleComplete ? (
+          <button
+            onClick={onShowResults}
+            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-cyan-950 border border-cyan-700 text-cyan-300 text-xs font-bold hover:bg-cyan-900 transition-all"
+          >
+            Ver resultados →
+          </button>
+        ) : hasNext ? (
           <button
             onClick={onNext}
-            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-xs font-bold hover:bg-slate-700 hover:border-slate-400 transition-all"
+            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-xs font-bold hover:bg-slate-700 hover:border-slate-400 transition-all"
           >
-            Siguiente <span className="text-slate-400">→</span>
+            Siguiente →
           </button>
-        )}
+        ) : null}
       </div>
     )
   }
@@ -79,7 +86,7 @@ function VotingBar({ scenario, answer, onVote, onNext, hasNext }) {
   )
 }
 
-export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote, onNext, hasNext }) {
+export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote, onNext, hasNext, isModuleComplete, onShowResults }) {
   const stageRef = useRef(null)
   const View = scenario ? VIEWS[scenario.module] : null
 
@@ -101,7 +108,13 @@ export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspo
       </div>
 
       {/* Voting bar — outside stageRef, never covered by X-Ray */}
-      {scenario && <VotingBar scenario={scenario} answer={answer} onVote={onVote} onNext={onNext} hasNext={hasNext} />}
+      {scenario && (
+        <VotingBar
+          scenario={scenario} answer={answer} onVote={onVote}
+          onNext={onNext} hasNext={hasNext}
+          isModuleComplete={isModuleComplete} onShowResults={onShowResults}
+        />
+      )}
     </div>
   )
 }

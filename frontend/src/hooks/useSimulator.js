@@ -20,6 +20,7 @@ export function useSimulator() {
     ? moduleScenarios[currentIndex + 1].id
     : null
   const prevScenarioId = currentIndex > 0 ? moduleScenarios[currentIndex - 1].id : null
+  const isModuleComplete = moduleScenarios.length > 0 && moduleScenarios.every((s) => answers[s.id] !== undefined)
 
   const selectScenario = useCallback((id) => {
     setActiveScenarioId(id)
@@ -63,6 +64,18 @@ export function useSimulator() {
     setActiveHotspotId(null)
   }, [])
 
+  const resetModule = useCallback(() => {
+    setAnswers((prev) => {
+      const next = { ...prev }
+      moduleScenarios.forEach((s) => delete next[s.id])
+      return next
+    })
+    setXrayActive(false)
+    setActiveHotspotId(null)
+    const first = moduleScenarios[0]
+    if (first) setActiveScenarioId(first.id)
+  }, [moduleScenarios])
+
   const getModuleScore = useCallback((moduleId) => {
     const scenarios = ALL_SCENARIOS.filter((s) => s.module === moduleId)
     let correct = 0
@@ -97,5 +110,8 @@ export function useSimulator() {
     getModuleScore,
     goNext,
     goPrev,
+    isModuleComplete,
+    moduleScenarios,
+    resetModule,
   }
 }

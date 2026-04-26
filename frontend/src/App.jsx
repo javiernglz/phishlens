@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Sidebar } from './components/layout/Sidebar'
 import { SimulatorStage } from './components/simulator/SimulatorStage'
+import { ModuleResult } from './components/simulator/ModuleResult'
 import { useSimulator } from './hooks/useSimulator'
 import { LandingPage } from './components/LandingPage'
+import { MODULES } from './data'
 
 export default function App() {
   const [started, setStarted] = useState(false)
+  const [showingResults, setShowingResults] = useState(false)
   const sim = useSimulator()
   const currentAnswer = sim.activeScenario ? sim.answers[sim.activeScenario.id] : undefined
+
+  // Reset results screen when switching modules
+  useEffect(() => { setShowingResults(false) }, [sim.activeModule])
 
   useEffect(() => {
     if (!started) return
@@ -25,6 +31,10 @@ export default function App() {
     return <LandingPage onStart={() => setStarted(true)} />
   }
 
+  const currentModuleIndex = MODULES.findIndex((m) => m.id === sim.activeModule)
+  const nextModule = MODULES[currentModuleIndex + 1] ?? null
+  const currentModuleLabel = MODULES[currentModuleIndex]?.label ?? ''
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950">
       <Sidebar
@@ -35,23 +45,35 @@ export default function App() {
         answers={sim.answers}
         getModuleScore={sim.getModuleScore}
         onModuleSelect={sim.selectModule}
-        onScenarioSelect={sim.selectScenario}
+        onScenarioSelect={(id) => { setShowingResults(false); sim.selectScenario(id) }}
         onToggleSidebar={sim.toggleSidebar}
         onToggleXray={sim.toggleXray}
         onResetAnswers={sim.resetAnswers}
         onHome={() => setStarted(false)}
       />
       <main className="flex-1 overflow-hidden">
-        <SimulatorStage
-          scenario={sim.activeScenario}
-          xrayActive={sim.xrayActive}
-          activeHotspotId={sim.activeHotspotId}
-          onHotspotClick={sim.setActiveHotspotId}
-          answer={currentAnswer}
-          onVote={sim.submitAnswer}
-          onNext={sim.goNext}
-          hasNext={!!sim.nextScenarioId}
-        />
+        {showingResults ? (
+          <ModuleResult
+            moduleLabel={currentModuleLabel}
+            moduleScenarios={sim.moduleScenarios}
+            answers={sim.answers}
+            onRetry={() => { sim.resetModule(); setShowingResults(false) }}
+            onNextModule={nextModule ? () => sim.selectModule(nextModule.id) : null}
+          />
+        ) : (
+          <SimulatorStage
+            scenario={sim.activeScenario}
+            xrayActive={sim.xrayActive}
+            activeHotspotId={sim.activeHotspotId}
+            onHotspotClick={sim.setActiveHotspotId}
+            answer={currentAnswer}
+            onVote={sim.submitAnswer}
+            onNext={sim.goNext}
+            hasNext={!!sim.nextScenarioId}
+            isModuleComplete={sim.isModuleComplete}
+            onShowResults={() => setShowingResults(true)}
+          />
+        )}
       </main>
     </div>
   )

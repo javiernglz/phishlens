@@ -31,7 +31,7 @@ function getAnswerStatus(scenario, answers) {
 export function Sidebar({
   activeModule, activeScenarioId, xrayActive, sidebarOpen,
   answers, getModuleScore,
-  onModuleSelect, onScenarioSelect, onToggleSidebar, onToggleXray, onResetAnswers,
+  onModuleSelect, onScenarioSelect, onToggleSidebar, onToggleXray, onResetAnswers, onHome,
 }) {
   const moduleScenarios = ALL_SCENARIOS.filter((s) => s.module === activeModule)
 
@@ -91,12 +91,16 @@ export function Sidebar({
     <div className="w-72 flex-shrink-0 bg-[#0d1117] border-r border-slate-800 flex flex-col">
       {/* Logo + collapse */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/60">
-        <div className="flex items-center gap-2">
+        <button
+          onClick={onHome}
+          title="Volver al inicio"
+          className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+        >
           <div className="w-6 h-6 rounded bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
             <span className="text-[9px] font-black text-cyan-400">PL</span>
           </div>
           <span className="text-sm font-bold text-slate-200 tracking-tight">PhishLens</span>
-        </div>
+        </button>
         <div className="flex items-center gap-1">
           <button
             onClick={onResetAnswers}
