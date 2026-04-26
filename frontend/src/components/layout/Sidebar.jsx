@@ -1,6 +1,6 @@
-import { ChevronLeft, ChevronRight, Mail, MessageCircle, FolderOpen, RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Mail, MessageCircle, FolderOpen, RotateCcw, Moon, Sun } from 'lucide-react'
 import { ScenarioCard } from '../ui/ScenarioCard'
-import { HookIcon } from '../ui/PhishLensLogo'
+import { WordMark } from '../ui/PhishLensLogo'
 import { ALL_SCENARIOS, MODULES } from '../../data'
 
 const MODULE_ICONS = { email: Mail, sms: MessageCircle, file: FolderOpen }
@@ -30,24 +30,32 @@ function getAnswerStatus(scenario, answers) {
 }
 
 export function Sidebar({
+  dark = true,
+  onToggleDark,
   activeModule, activeScenarioId, xrayActive, sidebarOpen,
   answers, getModuleScore,
   onModuleSelect, onScenarioSelect, onToggleSidebar, onToggleXray, onResetAnswers, onHome,
 }) {
   const moduleScenarios = ALL_SCENARIOS.filter((s) => s.module === activeModule)
 
+  const bg     = dark ? 'bg-[#0d1117]' : 'bg-white'
+  const border  = dark ? 'border-slate-800' : 'border-slate-200'
+  const iconBtn = dark
+    ? 'text-slate-600 hover:text-slate-300 hover:bg-slate-800'
+    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+
   if (!sidebarOpen) {
     return (
-      <div className="w-14 flex-shrink-0 bg-[#0d1117] border-r border-slate-800 flex flex-col items-center py-3 gap-2">
+      <div className={`w-14 flex-shrink-0 ${bg} border-r ${border} flex flex-col items-center py-3 gap-2`}>
         <button
           onClick={onToggleSidebar}
           title="Abrir panel"
-          className="p-2 rounded-md hover:bg-slate-800 text-slate-500 hover:text-cyan-400 transition-colors"
+          className={`p-2 rounded-md transition-colors ${iconBtn}`}
         >
           <ChevronRight size={16} />
         </button>
 
-        <div className="w-px h-4 bg-slate-800" />
+        <div className={`w-px h-4 ${dark ? 'bg-slate-800' : 'bg-slate-200'}`} />
 
         {MODULES.map((m) => {
           const Icon = MODULE_ICONS[m.id]
@@ -59,8 +67,10 @@ export function Sidebar({
               title={`${m.label} — ${score.correct}/${score.total}`}
               className={`p-2 rounded-md transition-colors relative ${
                 activeModule === m.id
-                  ? 'text-cyan-400 bg-cyan-950/50'
-                  : 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'
+                  ? 'text-cyan-500 bg-cyan-950/50'
+                  : dark
+                  ? 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'
+                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
               }`}
             >
               <Icon size={16} />
@@ -89,29 +99,37 @@ export function Sidebar({
   }
 
   return (
-    <div className="w-72 flex-shrink-0 bg-[#0d1117] border-r border-slate-800 flex flex-col">
+    <div className={`w-72 flex-shrink-0 ${bg} border-r ${border} flex flex-col`}>
       {/* Logo + collapse */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/60">
+      <div className={`flex items-center justify-between px-4 py-3 border-b ${border}`}>
         <button
           onClick={onHome}
           title="Volver al inicio"
           className="flex items-center gap-2 hover:opacity-70 transition-opacity"
         >
-          <HookIcon size={20} color="#22d3ee" strokeWidth={2.2} />
-          <span className="text-sm font-bold text-slate-200 tracking-tight">PhishLens</span>
+          <WordMark size={15} dark={dark} />
         </button>
         <div className="flex items-center gap-1">
+          {onToggleDark && (
+            <button
+              onClick={onToggleDark}
+              title={dark ? 'Modo claro' : 'Modo oscuro'}
+              className={`p-1.5 rounded transition-colors ${iconBtn}`}
+            >
+              {dark ? <Sun size={13} /> : <Moon size={13} />}
+            </button>
+          )}
           <button
             onClick={onResetAnswers}
             title="Reiniciar puntuaciones"
-            className="p-1.5 rounded hover:bg-slate-800 text-slate-600 hover:text-slate-300 transition-colors"
+            className={`p-1.5 rounded transition-colors ${iconBtn}`}
           >
             <RotateCcw size={13} />
           </button>
           <button
             onClick={onToggleSidebar}
             title="Colapsar panel"
-            className="p-1.5 rounded hover:bg-slate-800 text-slate-600 hover:text-slate-300 transition-colors"
+            className={`p-1.5 rounded transition-colors ${iconBtn}`}
           >
             <ChevronLeft size={15} />
           </button>
@@ -119,7 +137,7 @@ export function Sidebar({
       </div>
 
       {/* Module tabs with score badges */}
-      <div className="flex border-b border-slate-800/60">
+      <div className={`flex border-b ${border}`}>
         {MODULES.map((m) => {
           const Icon = MODULE_ICONS[m.id]
           const score = getModuleScore(m.id)
@@ -129,8 +147,10 @@ export function Sidebar({
               onClick={() => onModuleSelect(m.id)}
               className={`flex-1 flex flex-col items-center gap-0.5 pt-2 pb-1.5 text-[10px] font-semibold tracking-wide transition-colors border-b-2 ${
                 activeModule === m.id
-                  ? 'text-cyan-400 border-cyan-400'
-                  : 'text-slate-600 border-transparent hover:text-slate-400 hover:border-slate-600'
+                  ? 'text-cyan-500 border-cyan-500'
+                  : dark
+                  ? 'text-slate-600 border-transparent hover:text-slate-400 hover:border-slate-600'
+                  : 'text-slate-400 border-transparent hover:text-slate-600 hover:border-slate-300'
               }`}
             >
               <Icon size={14} />
@@ -150,12 +170,13 @@ export function Sidebar({
             isActive={scenario.id === activeScenarioId}
             onClick={onScenarioSelect}
             answerStatus={getAnswerStatus(scenario, answers)}
+            dark={dark}
           />
         ))}
       </div>
 
       {/* Reveal button */}
-      <div className="p-3 border-t border-slate-800/60">
+      <div className={`p-3 border-t ${border}`}>
         <button
           onClick={onToggleXray}
           className={`w-full py-2.5 rounded-lg border text-xs font-bold tracking-widest uppercase transition-all duration-300 ${

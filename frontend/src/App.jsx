@@ -15,6 +15,7 @@ function SoloApp() {
   const navigate = useNavigate()
   const [started, setStarted] = useState(false)
   const [showingResults, setShowingResults] = useState(false)
+  const [dark, setDark] = useState(false)
   const sim = useSimulator()
   const currentAnswer = sim.activeScenario ? sim.answers[sim.activeScenario.id] : undefined
 
@@ -53,8 +54,10 @@ function SoloApp() {
   })
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950">
+    <div className={`flex h-screen overflow-hidden ${dark ? 'bg-slate-950' : 'bg-slate-100'}`}>
       <Sidebar
+        dark={dark}
+        onToggleDark={() => setDark((d) => !d)}
         activeModule={sim.activeModule}
         activeScenarioId={sim.activeScenarioId}
         xrayActive={sim.xrayActive}
@@ -71,6 +74,7 @@ function SoloApp() {
       <main className="flex-1 overflow-hidden">
         {showingResults ? (
           <ModuleResult
+            dark={dark}
             moduleLabel={currentModuleLabel}
             moduleScenarios={sim.moduleScenarios}
             answers={sim.answers}
@@ -79,6 +83,7 @@ function SoloApp() {
           />
         ) : (
           <SimulatorStage
+            dark={dark}
             scenario={sim.activeScenario}
             xrayActive={sim.xrayActive}
             activeHotspotId={sim.activeHotspotId}
