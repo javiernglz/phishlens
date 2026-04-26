@@ -103,6 +103,40 @@ export const fileScenarios = [
     ],
   },
 
+  {
+    id: 'file-medium-002',
+    module: 'file',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Excel con Macros (.xlsm)',
+    description: 'Factura de proveedor que ejecuta código malicioso al habilitar macros',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'informe_reunion_abril.docx', icon: 'word', size: '94 KB', date: '23/04/2026', kind: 'Documento Word', safe: true },
+        {
+          name: 'Factura_Proveedor_ABR2026.xlsm',
+          icon: 'excel',
+          size: '2.8 MB',
+          date: '25/04/2026',
+          kind: 'Hoja de cálculo con macros',
+          safe: false,
+          id: 'hs-file',
+          note: 'Al abrir, Excel muestra "Contenido deshabilitado — pulsa Habilitar contenido para ver la factura". Hacerlo ejecuta el malware.',
+        },
+        { name: 'catalogo_precios_2026.pdf', icon: 'pdf', size: '1.1 MB', date: '22/04/2026', kind: 'Documento PDF', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'Extensión .xlsm — Macros Embebidas',
+        severity: 'danger',
+        explanation: '".xlsm" es un Excel con macros — código que se ejecuta dentro del documento. El tipo "Hoja de cálculo con macros" lo confirma en el Finder. Ninguna factura legítima necesita macros para mostrarse. Si Excel te muestra la barra amarilla "Habilitar contenido", cierra el archivo y pide al proveedor un PDF o un .xlsx estándar.',
+      },
+    ],
+  },
+
   // ─── HARD: legít → phishing ──────────────────────────────────────────────
 
   {

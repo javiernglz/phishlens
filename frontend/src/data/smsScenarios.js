@@ -366,6 +366,47 @@ export const smsScenarios = [
   },
 
   {
+    id: 'sms-hard-002',
+    module: 'sms',
+    isPhishing: true,
+    level: 'hard',
+    title: 'Devolución IRPF — AEAT',
+    description: 'Smishing suplantando a Hacienda sincronizado con la campaña de la Renta',
+    content: {
+      platform: 'sms',
+      sender: 'AEAT',
+      senderName: 'AEAT',
+      messages: [
+        {
+          from: 'them',
+          text: 'AEAT: Tiene una devolución de IRPF pendiente por importe de 348,72€. Acceda a su espacio personal para confirmar su cuenta bancaria y gestionar el cobro:',
+          time: '10:07',
+        },
+        {
+          from: 'them',
+          type: 'link',
+          text: 'agencia-tributaria.devoluciones-irpf.com/acceso',
+          time: '10:07',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Remitente AEAT Falsificado',
+        severity: 'warning',
+        explanation: 'El nombre "AEAT" puede ser suplantado mediante SMS spoofing, igual que "CORREOS" o "SANTANDER". El mensaje puede incluso aparecer en el mismo hilo que SMS legítimos de Hacienda. La clave: la AEAT nunca pide datos bancarios por SMS — las devoluciones se ingresan automáticamente en la cuenta que declaraste en la Renta.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Dominio Falso + Recolección Bancaria',
+        severity: 'danger',
+        explanation: 'El dominio real de la Agencia Tributaria es "sede.agenciatributaria.gob.es". "agencia-tributaria.devoluciones-irpf.com" imita el nombre oficial pero es un dominio .com fraudulento. La campaña coincide con la época de la Renta — los atacantes sincronizan estos SMS con fechas reales para que el importe y el contexto parezcan creíbles.',
+      },
+    ],
+  },
+
+  {
     id: 'sms-legit-hard-001',
     module: 'sms',
     isPhishing: false,

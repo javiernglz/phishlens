@@ -217,6 +217,53 @@ export const emailScenarios = [
     ],
   },
 
+  {
+    id: 'email-medium-002',
+    module: 'email',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Contraseña Microsoft 365',
+    description: 'Alerta de caducidad de contraseña — suplantación de Microsoft',
+    content: {
+      fromDisplay: 'Microsoft 365',
+      fromEmail: 'security@microsoft-account-alerts.com',
+      to: 'usuario@acme-corp.es',
+      subject: 'Acción requerida: tu contraseña caduca en 3 días',
+      date: '25 abr. 2026, 07:58',
+      avatarColor: '#0078d4',
+      avatarInitial: 'M',
+      body: [
+        { type: 'text', value: 'Tu contraseña de Microsoft 365 caducará el 28/04/2026.' },
+        { type: 'spacer' },
+        { type: 'text', value: 'Perderás el acceso a Outlook, Teams, SharePoint y OneDrive si no la actualizas antes de la fecha límite.' },
+        { type: 'spacer' },
+        {
+          type: 'button',
+          label: 'Actualizar contraseña',
+          fakeUrl: 'login.microsoftonline.com/common/oauth2/authorize',
+          realUrl: 'http://microsoft-account-alerts.com/harvest?u=usuario@acme-corp.es',
+          id: 'hs-link',
+        },
+        { type: 'spacer' },
+        { type: 'text', value: 'Si ya has cambiado tu contraseña recientemente, ignora este mensaje.\n\nMicrosoft 365 · Seguridad de cuenta\nEste mensaje se genera automáticamente, no respondas.' },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Dominio Impostor de Microsoft',
+        severity: 'danger',
+        explanation: 'Microsoft envía alertas de seguridad desde dominios como "@accountprotection.microsoft.com". "microsoft-account-alerts.com" es un dominio registrado por atacantes — contiene la palabra "microsoft" pero no pertenece a Microsoft. El dominio legítimo siempre termina en "microsoft.com", sin palabras añadidas después.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Página de Login Clonada',
+        severity: 'danger',
+        explanation: 'El botón muestra "login.microsoftonline.com" pero el enlace real lleva a "microsoft-account-alerts.com". Al hacer clic verás una copia exacta de la pantalla de login de Microsoft — todo lo que escribas va al atacante. Es la técnica más eficaz para robar credenciales corporativas en masa.',
+      },
+    ],
+  },
+
   // ─── HARD: legít → phishing ──────────────────────────────────────────────
 
   {
@@ -305,6 +352,60 @@ export const emailScenarios = [
         label: 'Urgencia Fabricada + Dominio Falso',
         severity: 'danger',
         explanation: 'La fecha límite de "17:00 de hoy" crea pánico para que actúes sin pensar. El botón lleva a "acme-c0rp.es" (con cero), no al dominio real. El spear phishing usa contexto real para bajar tu guardia.',
+      },
+    ],
+  },
+
+  {
+    id: 'email-hard-002',
+    module: 'email',
+    isPhishing: true,
+    level: 'hard',
+    title: 'DocuSign — Documento Pendiente',
+    description: 'Suplantación de DocuSign para robar credenciales corporativas',
+    content: {
+      fromDisplay: 'DocuSign · Firma Electrónica',
+      fromEmail: 'envelope@docusign-esignature.net',
+      to: 'usuario@acme-corp.es',
+      subject: 'Carlos Ruiz te ha enviado un documento para firmar',
+      date: '25 abr. 2026, 16:52',
+      avatarColor: '#f5a623',
+      avatarInitial: 'D',
+      body: [
+        { type: 'text', value: 'Carlos Ruiz (cruiz@consultores-rm.es) ha enviado un documento para tu revisión y firma.' },
+        { type: 'spacer' },
+        {
+          type: 'info-block',
+          rows: [
+            { label: 'Documento', value: 'Acuerdo de Confidencialidad — ACME Corp. 2026.pdf' },
+            { label: 'Remitente', value: 'Carlos Ruiz · Consultores RM' },
+            { label: 'Caduca', value: '28/04/2026 · 23:59' },
+          ],
+        },
+        { type: 'spacer' },
+        {
+          type: 'button',
+          label: 'Revisar y firmar',
+          fakeUrl: 'docusign.com/signing/start?token=eyJ0eXAiOiJKV1Q',
+          realUrl: 'http://docusign-esignature.net/phish?id=acme&user=usuario',
+          id: 'hs-link',
+        },
+        { type: 'spacer' },
+        { type: 'text', value: 'No compartas este correo — contiene un enlace de acceso único.\n\nDocuSign · The world\'s #1 way to sign\n© 2026 DocuSign Inc.' },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Dominio Similar al Real, No Idéntico',
+        severity: 'danger',
+        explanation: 'DocuSign envía notificaciones desde "@docusign.net" o "@docusign.com". Este correo llega de "docusign-esignature.net" — un dominio registrado por atacantes que incluye "docusign" para confundir. El guion y la palabra añadida son la trampa: el dominio raíz no es docusign.com.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Portal de Firma Falso',
+        severity: 'danger',
+        explanation: 'El botón muestra "docusign.com" pero lleva a "docusign-esignature.net". Al abrir pedirá tu email y contraseña corporativa "para verificar tu identidad antes de firmar" — algo que DocuSign real nunca hace. Los documentos legítimos se abren directamente con el token del correo, sin login adicional.',
       },
     ],
   },
