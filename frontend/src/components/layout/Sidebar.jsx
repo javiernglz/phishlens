@@ -97,9 +97,7 @@ export function Sidebar({
           title="Volver al inicio"
           className="flex items-center gap-2 hover:opacity-70 transition-opacity"
         >
-          <div className="w-6 h-6 rounded bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
-            <HookIcon size={14} color="#22d3ee" strokeWidth={1.8} />
-          </div>
+          <HookIcon size={20} color="#22d3ee" strokeWidth={2.2} />
           <span className="text-sm font-bold text-slate-200 tracking-tight">PhishLens</span>
         </button>
         <div className="flex items-center gap-1">

@@ -119,9 +119,7 @@ export function LandingPage({ onStart }) {
       {/* ── NAVBAR ─────────────────────────────────────────────────────── */}
       <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#e0f2fe', border: '1px solid #bae6fd' }}>
-            <HookIcon size={18} color="#0891b2" strokeWidth={1.8} />
-          </div>
+          <HookIcon size={24} color="#0891b2" strokeWidth={2.2} />
           <span className="text-sm font-bold text-slate-800 tracking-tight">PhishLens</span>
         </div>
         <a
