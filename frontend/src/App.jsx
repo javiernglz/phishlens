@@ -35,6 +35,13 @@ export default function App() {
   const nextModule = MODULES[currentModuleIndex + 1] ?? null
   const currentModuleLabel = MODULES[currentModuleIndex]?.label ?? ''
 
+  const moduleProgress = sim.moduleScenarios.map((s) => {
+    const ans = sim.answers[s.id]
+    const status = ans === undefined ? 'unanswered'
+      : (ans === 'phishing') === (s.isPhishing !== false) ? 'correct' : 'incorrect'
+    return { id: s.id, isActive: s.id === sim.activeScenarioId, status, level: s.level }
+  })
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950">
       <Sidebar
@@ -72,6 +79,7 @@ export default function App() {
             hasNext={!!sim.nextScenarioId}
             isModuleComplete={sim.isModuleComplete}
             onShowResults={() => setShowingResults(true)}
+            moduleProgress={moduleProgress}
           />
         )}
       </main>

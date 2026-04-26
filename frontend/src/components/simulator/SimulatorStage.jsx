@@ -10,6 +10,53 @@ const VIEWS = {
   file: FileView,
 }
 
+const LEVEL_STYLES = {
+  easy:   { label: 'Fácil',  className: 'bg-emerald-950 text-emerald-400 border-emerald-800' },
+  medium: { label: 'Medio',  className: 'bg-amber-950 text-amber-400 border-amber-800' },
+  hard:   { label: 'Difícil', className: 'bg-rose-950 text-rose-400 border-rose-800' },
+}
+
+const DOT_STYLES = {
+  unanswered: 'bg-slate-700',
+  correct:    'bg-emerald-500',
+  incorrect:  'bg-rose-500',
+}
+
+function StageHeader({ scenario, moduleProgress }) {
+  const level = LEVEL_STYLES[scenario.level] ?? LEVEL_STYLES.easy
+  const activeIndex = moduleProgress.findIndex((p) => p.isActive)
+  const total = moduleProgress.length
+
+  return (
+    <div className="flex-shrink-0 h-10 bg-[#0d1117] border-b border-slate-800 flex items-center justify-between px-4 gap-4">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex-shrink-0 ${level.className}`}>
+          {level.label}
+        </span>
+        <span className="text-slate-400 text-xs truncate">{scenario.title}</span>
+      </div>
+
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-1">
+          {moduleProgress.map((p) => (
+            <span
+              key={p.id}
+              className={`block rounded-full transition-all duration-200 ${
+                p.isActive
+                  ? 'w-3.5 h-2 bg-cyan-400'
+                  : `w-2 h-2 ${DOT_STYLES[p.status]}`
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-slate-500 text-xs font-medium tabular-nums">
+          {activeIndex + 1}/{total}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function EmptyState() {
   return (
     <div className="h-full flex items-center justify-center bg-slate-900">
@@ -86,12 +133,16 @@ function VotingBar({ scenario, answer, onVote, onNext, hasNext, isModuleComplete
   )
 }
 
-export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote, onNext, hasNext, isModuleComplete, onShowResults }) {
+export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote, onNext, hasNext, isModuleComplete, onShowResults, moduleProgress }) {
   const stageRef = useRef(null)
   const View = scenario ? VIEWS[scenario.module] : null
 
   return (
     <div className="flex flex-col h-full">
+      {scenario && moduleProgress?.length > 0 && (
+        <StageHeader scenario={scenario} moduleProgress={moduleProgress} />
+      )}
+
       {/* Simulator view — stageRef here so X-Ray only covers this area */}
       <div ref={stageRef} className="flex-1 relative overflow-hidden">
         {View ? <View scenario={scenario} /> : <EmptyState />}
