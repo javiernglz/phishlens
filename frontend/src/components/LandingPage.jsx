@@ -141,10 +141,10 @@ export function LandingPage({ onStart }) {
             Simulador interactivo · Ciberseguridad
           </p>
           <h1 className="text-5xl lg:text-[3.6rem] font-black leading-[1.1] tracking-tight mb-6 text-slate-900">
-            ¿Tu audiencia<br />caería en<br />el anzuelo?
+            ¿Detectarías<br />el engaño<br />a tiempo?
           </h1>
           <p className="text-slate-500 text-lg leading-relaxed mb-10 max-w-sm mx-auto lg:mx-0">
-            Simula correos, mensajes y archivos maliciosos en pantalla grande. El público vota, tú revelas la verdad.
+            Pon a prueba tu instinto frente a correos, SMS y archivos reales. Vota en cada escenario y descubre en qué habrías caído.
           </p>
           <button
             onClick={onStart}
@@ -182,26 +182,26 @@ export function LandingPage({ onStart }) {
       <section className="max-w-6xl mx-auto px-8 py-20">
         <div className="text-center mb-14">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Cómo funciona</h2>
-          <p className="text-slate-400 text-sm">Tres pasos para una charla que el público no olvida</p>
+          <p className="text-slate-400 text-sm">Tres pasos para descubrir en qué habrías caído</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
               n: '01',
               title: 'Elige el escenario',
-              desc: 'Email, SMS, WhatsApp o archivo. Elige la dificultad según tu audiencia. La interfaz aparece en pantalla, idéntica a la aplicación real.',
+              desc: 'Email, SMS o archivo. Elige la dificultad. La interfaz replica la aplicación real — sin pistas artificiales que te lo pongan fácil.',
               color: '#0891b2',
             },
             {
               n: '02',
-              title: 'La audiencia vota',
-              desc: 'Legítimo o phishing — sin segunda oportunidad. La mitad de los escenarios son legítimos, así que nadie puede adivinar sistemáticamente.',
+              title: '¿Legítimo o phishing?',
+              desc: 'Una sola oportunidad. La mitad de los escenarios son mensajes reales, así que no puedes adivinar sistemáticamente: tienes que razonarlo.',
               color: '#7c3aed',
             },
             {
               n: '03',
               title: 'X-Ray revela la verdad',
-              desc: 'El escáner ilumina cada señal de ataque con bordes de colores. Los hotspots explican la técnica. El aprendizaje se fija porque ellos mismos cayeron.',
+              desc: 'El escáner ilumina cada señal de ataque. Los hotspots explican la técnica exacta usada contra ti. Aprendes porque lo has vivido.',
               color: '#ea580c',
             },
           ].map(({ n, title, desc, color }) => (
@@ -268,15 +268,15 @@ export function LandingPage({ onStart }) {
 
       {/* ── FINAL CTA ──────────────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-8 py-20 text-center">
-        <h2 className="text-4xl font-black text-slate-900 mb-4">¿Listo para la demo?</h2>
+        <h2 className="text-4xl font-black text-slate-900 mb-4">¿Te atreves a comprobarlo?</h2>
         <p className="text-slate-400 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
-          Sin registro. Sin instalación. Abre y empieza en segundos.
+          Sin registro. Sin instalación. Empieza ahora y descubre cuántos habrías detectado.
         </p>
         <button
           onClick={onStart}
           className="group inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-10 py-4 rounded-full text-sm hover:bg-slate-700 transition-all duration-200"
         >
-          Empezar demo
+          Poner a prueba mi instinto
           <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
         </button>
       </section>
