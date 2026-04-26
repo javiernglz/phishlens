@@ -10,9 +10,16 @@ export function useSimulator() {
   const [xrayActive, setXrayActive] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [activeHotspotId, setActiveHotspotId] = useState(null)
-  const [answers, setAnswers] = useState({}) // { [scenarioId]: 'phishing' | 'legit' }
+  const [answers, setAnswers] = useState({})
 
   const activeScenario = ALL_SCENARIOS.find((s) => s.id === activeScenarioId) ?? null
+
+  const moduleScenarios = ALL_SCENARIOS.filter((s) => s.module === activeModule)
+  const currentIndex = moduleScenarios.findIndex((s) => s.id === activeScenarioId)
+  const nextScenarioId = currentIndex >= 0 && currentIndex < moduleScenarios.length - 1
+    ? moduleScenarios[currentIndex + 1].id
+    : null
+  const prevScenarioId = currentIndex > 0 ? moduleScenarios[currentIndex - 1].id : null
 
   const selectScenario = useCallback((id) => {
     setActiveScenarioId(id)
@@ -27,6 +34,14 @@ export function useSimulator() {
     const first = ALL_SCENARIOS.find((s) => s.module === moduleId)
     if (first) setActiveScenarioId(first.id)
   }, [])
+
+  const goNext = useCallback(() => {
+    if (nextScenarioId) selectScenario(nextScenarioId)
+  }, [nextScenarioId, selectScenario])
+
+  const goPrev = useCallback(() => {
+    if (prevScenarioId) selectScenario(prevScenarioId)
+  }, [prevScenarioId, selectScenario])
 
   const toggleXray = useCallback(() => {
     setXrayActive((prev) => !prev)
@@ -70,6 +85,8 @@ export function useSimulator() {
     sidebarOpen,
     activeHotspotId,
     answers,
+    nextScenarioId,
+    prevScenarioId,
     selectScenario,
     selectModule,
     toggleXray,
@@ -78,5 +95,7 @@ export function useSimulator() {
     submitAnswer,
     resetAnswers,
     getModuleScore,
+    goNext,
+    goPrev,
   }
 }

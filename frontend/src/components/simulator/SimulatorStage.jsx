@@ -21,39 +21,49 @@ function EmptyState() {
   )
 }
 
-function VotingBar({ scenario, answer, onVote }) {
+function VotingBar({ scenario, answer, onVote, onNext, hasNext }) {
   const isAnswered = answer !== undefined
   const scenarioIsPhishing = scenario.isPhishing !== false
   const isCorrect = isAnswered && (answer === 'phishing') === scenarioIsPhishing
 
   if (isAnswered) {
     const msg = isCorrect && scenarioIsPhishing
-      ? '¡Correcto! El público identificó el ataque.'
+      ? '¡Correcto! Lo detectaste — era phishing.'
       : isCorrect && !scenarioIsPhishing
-      ? '¡Correcto! El mensaje era legítimo.'
+      ? '¡Correcto! Lo detectaste — era un mensaje legítimo.'
       : !isCorrect && scenarioIsPhishing
-      ? '¡La audiencia cayó! Era phishing — usa X-Ray para analizarlo.'
-      : '¡Falso positivo! Era un mensaje legítimo — usa X-Ray para ver por qué.'
+      ? '¡Caíste en la trampa! Era phishing — usa X-Ray para analizarlo.'
+      : '¡Falso positivo! Era legítimo — usa X-Ray para ver qué te confundió.'
 
     return (
       <div
-        className={`flex-shrink-0 h-14 border-t flex items-center justify-center gap-3 px-6 transition-colors ${
+        className={`flex-shrink-0 min-h-14 border-t flex items-center justify-between gap-3 px-6 py-2 transition-colors ${
           isCorrect
             ? 'bg-emerald-950/90 border-emerald-800'
             : 'bg-rose-950/90 border-rose-900'
         }`}
       >
-        <span className="text-xl select-none">{isCorrect ? '✓' : '✗'}</span>
-        <span className={`text-sm font-semibold ${isCorrect ? 'text-emerald-300' : 'text-rose-300'}`}>
-          {msg}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xl select-none">{isCorrect ? '✓' : '✗'}</span>
+          <span className={`text-sm font-semibold ${isCorrect ? 'text-emerald-300' : 'text-rose-300'}`}>
+            {msg}
+          </span>
+        </div>
+        {hasNext && (
+          <button
+            onClick={onNext}
+            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-xs font-bold hover:bg-slate-700 hover:border-slate-400 transition-all"
+          >
+            Siguiente <span className="text-slate-400">→</span>
+          </button>
+        )}
       </div>
     )
   }
 
   return (
     <div className="flex-shrink-0 h-14 bg-[#0d1117] border-t border-slate-800 flex items-center justify-center gap-3 px-6">
-<button
+      <button
         onClick={() => onVote('legit')}
         className="flex items-center gap-2 px-5 py-2 rounded-lg bg-emerald-900/50 border border-emerald-700 text-emerald-300 text-sm font-bold hover:bg-emerald-800/70 hover:border-emerald-500 transition-all"
       >
@@ -69,7 +79,7 @@ function VotingBar({ scenario, answer, onVote }) {
   )
 }
 
-export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote }) {
+export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspotClick, answer, onVote, onNext, hasNext }) {
   const stageRef = useRef(null)
   const View = scenario ? VIEWS[scenario.module] : null
 
@@ -91,7 +101,7 @@ export function SimulatorStage({ scenario, xrayActive, activeHotspotId, onHotspo
       </div>
 
       {/* Voting bar — outside stageRef, never covered by X-Ray */}
-      {scenario && <VotingBar scenario={scenario} answer={answer} onVote={onVote} />}
+      {scenario && <VotingBar scenario={scenario} answer={answer} onVote={onVote} onNext={onNext} hasNext={hasNext} />}
     </div>
   )
 }
