@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/Sidebar'
 import { SimulatorStage } from './components/simulator/SimulatorStage'
 import { ModuleResult } from './components/simulator/ModuleResult'
 import { useSimulator } from './hooks/useSimulator'
 import { LandingPage } from './components/LandingPage'
+import { HostRoom } from './pages/HostRoom'
+import { PlayerJoin } from './pages/PlayerJoin'
+import { PlayerRoom } from './pages/PlayerRoom'
 import { MODULES } from './data'
+import { generateRoomCode } from './lib/roomUtils'
 
-export default function App() {
+function SoloApp() {
+  const navigate = useNavigate()
   const [started, setStarted] = useState(false)
   const [showingResults, setShowingResults] = useState(false)
   const sim = useSimulator()
   const currentAnswer = sim.activeScenario ? sim.answers[sim.activeScenario.id] : undefined
 
-  // Reset results screen when switching modules
   useEffect(() => { setShowingResults(false) }, [sim.activeModule])
 
   useEffect(() => {
@@ -28,7 +33,12 @@ export default function App() {
   }, [started, sim.goNext, sim.goPrev, sim.toggleXray])
 
   if (!started) {
-    return <LandingPage onStart={() => setStarted(true)} />
+    return (
+      <LandingPage
+        onStart={() => setStarted(true)}
+        onHost={() => navigate('/host-setup')}
+      />
+    )
   }
 
   const currentModuleIndex = MODULES.findIndex((m) => m.id === sim.activeModule)
@@ -83,6 +93,34 @@ export default function App() {
           />
         )}
       </main>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SoloApp />} />
+        <Route path="/host-setup" element={<HostSetupPage />} />
+        <Route path="/host/:code" element={<HostRoom />} />
+        <Route path="/join" element={<PlayerJoin />} />
+        <Route path="/join/:code" element={<PlayerRoom />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+function HostSetupPage() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    navigate(`/host/${generateRoomCode()}`, { replace: true })
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+      <div className="w-6 h-6 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
     </div>
   )
 }

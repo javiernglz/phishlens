@@ -1,4 +1,4 @@
-import { ArrowRight, Mail, MessageCircle, FolderOpen } from 'lucide-react'
+import { ArrowRight, Mail, MessageCircle, FolderOpen, Users } from 'lucide-react'
 import { HookIcon } from './ui/PhishLensLogo'
 import { ALL_SCENARIOS } from '../data'
 
@@ -112,7 +112,7 @@ function HeroMosaic() {
 
 // ── Landing page ───────────────────────────────────────────────────────────
 
-export function LandingPage({ onStart }) {
+export function LandingPage({ onStart, onHost }) {
   return (
     <div className="min-h-screen bg-white text-slate-900" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
 
@@ -146,13 +146,24 @@ export function LandingPage({ onStart }) {
           <p className="text-slate-500 text-lg leading-relaxed mb-10 max-w-sm mx-auto lg:mx-0">
             Pon a prueba tu instinto frente a correos, SMS y archivos reales. Vota en cada escenario y descubre en qué habrías caído.
           </p>
-          <button
-            onClick={onStart}
-            className="group inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-8 py-3.5 rounded-full text-sm hover:bg-slate-700 transition-all duration-200"
-          >
-            Empezar demo
-            <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-          </button>
+          <div className="flex flex-wrap items-center gap-3 justify-center lg:justify-start">
+            <button
+              onClick={onStart}
+              className="group inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-8 py-3.5 rounded-full text-sm hover:bg-slate-700 transition-all duration-200"
+            >
+              Empezar solo
+              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+            {onHost && (
+              <button
+                onClick={onHost}
+                className="group inline-flex items-center gap-2 bg-cyan-600 text-white font-bold px-8 py-3.5 rounded-full text-sm hover:bg-cyan-500 transition-all duration-200"
+              >
+                Crear partida en vivo
+                <Users size={15} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mosaic — hidden on mobile */}
