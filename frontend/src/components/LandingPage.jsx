@@ -448,10 +448,10 @@ function MultiplayerSection({ t }) {
   const lgPct = totalV ? 100-phPct : 0
 
   const feats = [
-    {icon:'📱', title:'Únete con QR', desc:'Sin registro. Escanea y juegas desde el móvil en segundos.'},
-    {icon:'⏱', title:'30 segundos por turno', desc:'La presión del tiempo es parte del entrenamiento real.'},
-    {icon:'📊', title:'Votos en tiempo real', desc:'Ves cómo decide el grupo mientras el reloj corre.'},
-    {icon:'🏆', title:'Podio al final', desc:'Clasificación con racha de aciertos y puntuación total.'},
+    {title:'Únete con QR'},
+    {title:'30 segundos por turno'},
+    {title:'Votos en tiempo real'},
+    {title:'Podio y clasificación final'},
   ]
 
   return (
@@ -466,18 +466,13 @@ function MultiplayerSection({ t }) {
               Como Kahoot,<br/>pero de ciberseguridad.
             </h2>
             <p style={{fontSize:15,color:t.muted,lineHeight:1.75,marginBottom:28}}>
-              Crea una sala, comparte el QR y tus jugadores se unen desde el móvil. Cada uno vota en cada escenario contra el reloj. Al final: podio, debate y X-Ray.
+              Crea una sala, comparte el QR y tus jugadores se unen desde el móvil. Cada uno vota contrarreloj en cada escenario para subir al podio.
             </p>
-            <div style={{display:'flex',flexDirection:'column',gap:13,marginBottom:36}}>
-              {feats.map(({icon,title,desc}) => (
-                <div key={title} style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-                  <div style={{width:38,height:38,borderRadius:9,flexShrink:0,background:t.bgCard,border:`1px solid ${t.border}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>
-                    {icon}
-                  </div>
-                  <div>
-                    <div style={{fontSize:13.5,fontWeight:700,color:t.text,marginBottom:2}}>{title}</div>
-                    <div style={{fontSize:12.5,color:t.sub,lineHeight:1.5}}>{desc}</div>
-                  </div>
+            <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:36}}>
+              {feats.map(({title}) => (
+                <div key={title} style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{width:6,height:6,borderRadius:'50%',flexShrink:0,background:t.accent}}/>
+                  <div style={{fontSize:14,fontWeight:600,color:t.text}}>{title}</div>
                 </div>
               ))}
             </div>
