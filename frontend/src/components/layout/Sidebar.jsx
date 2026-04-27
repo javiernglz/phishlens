@@ -164,7 +164,34 @@ export function Sidebar({
 
       {/* Scenario list */}
       <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1">
-        {moduleScenarios.map((scenario) => (
+        {activeModule === 'sms' ? (() => {
+          const sms = moduleScenarios.filter(s => s.content?.platform !== 'whatsapp')
+          const wa  = moduleScenarios.filter(s => s.content?.platform === 'whatsapp')
+          return (
+            <>
+              {sms.length > 0 && (
+                <div className={`flex items-center gap-2 px-1 pt-1 pb-0.5`}>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${dark ? 'text-slate-600' : 'text-slate-400'}`}>SMS</span>
+                  <div className={`flex-1 h-px ${dark ? 'bg-slate-800' : 'bg-slate-200'}`} />
+                </div>
+              )}
+              {sms.map(scenario => (
+                <ScenarioCard key={scenario.id} scenario={scenario} isActive={scenario.id === activeScenarioId}
+                  onClick={onScenarioSelect} answerStatus={getAnswerStatus(scenario, answers)} dark={dark} />
+              ))}
+              {wa.length > 0 && (
+                <div className={`flex items-center gap-2 px-1 pt-3 pb-0.5`}>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${dark ? 'text-[#25d366]/70' : 'text-[#128c7e]'}`}>WhatsApp</span>
+                  <div className={`flex-1 h-px ${dark ? 'bg-[#25d366]/20' : 'bg-[#25d366]/30'}`} />
+                </div>
+              )}
+              {wa.map(scenario => (
+                <ScenarioCard key={scenario.id} scenario={scenario} isActive={scenario.id === activeScenarioId}
+                  onClick={onScenarioSelect} answerStatus={getAnswerStatus(scenario, answers)} dark={dark} />
+              ))}
+            </>
+          )
+        })() : moduleScenarios.map((scenario) => (
           <ScenarioCard
             key={scenario.id}
             scenario={scenario}
