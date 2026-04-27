@@ -10,6 +10,43 @@ const LEVEL_STYLES = {
   hard:   { bg: 'bg-rose-50',     text: 'text-rose-700',    border: 'border-rose-300',    label: 'Difícil' },
 }
 
+// ─── Lobby waiting screen ─────────────────────────────────────────────────────
+
+function LobbyWaiting({ playerName, code, connected }) {
+  return (
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-6 text-center">
+      <div className="mb-10">
+        <WordMark size={18} dark={true} />
+      </div>
+
+      {/* Animated hook */}
+      <div className="text-6xl mb-8 animate-bounce select-none">🎣</div>
+
+      {/* Name badge */}
+      <div className="bg-indigo-600 rounded-2xl px-8 py-4 mb-8 shadow-lg shadow-indigo-900/40">
+        <p className="text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-1">Conectado como</p>
+        <p className="text-white text-2xl font-bold">{playerName}</p>
+      </div>
+
+      {/* Room code */}
+      <div className="mb-8">
+        <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-2">Sala</p>
+        <p className="text-indigo-400 font-mono font-black text-3xl tracking-widest">{code}</p>
+      </div>
+
+      {/* Status */}
+      <div className="flex items-center gap-2.5 text-slate-400 text-sm">
+        <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600 animate-pulse'}`} />
+        {connected
+          ? 'Esperando a que el presentador inicie…'
+          : 'Conectando…'}
+      </div>
+    </div>
+  )
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export function PlayerRoom() {
   const { code }   = useParams()
   const playerId   = getOrCreatePlayerId()
@@ -18,7 +55,7 @@ export function PlayerRoom() {
   const [gameState, setGameState]   = useState(null)
   const [voted, setVoted]           = useState(false)
   const [myVote, setMyVote]         = useState(null)
-  const [phase, setPhase]           = useState('waiting')
+  const [phase, setPhase]           = useState('connecting')
   const [score, setScore]           = useState({ correct: 0, total: 0 })
 
   const channelRef     = useRef(null)
@@ -39,7 +76,8 @@ export function PlayerRoom() {
         const isNewQuestion = payload.scenarioId !== prevScenarioId.current
 
         if (isNewQuestion) {
-          if (prevScenarioId.current !== null) {
+          // Only count score when transitioning between real questions (not from lobby)
+          if (prevScenarioId.current !== null && prevGameState.current?.phase !== 'lobby') {
             const correct = prevGameState.current?.correctAnswer
             const vote    = myVoteRef.current
             setScore((s) => ({
@@ -61,6 +99,8 @@ export function PlayerRoom() {
         if (status === 'SUBSCRIBED') {
           await channel.track({ role: 'player', name: playerName, playerId })
           channel.send({ type: 'broadcast', event: 'request_state', payload: {} })
+          // If no state arrives within 1s, show lobby anyway
+          setTimeout(() => setPhase((p) => p === 'connecting' ? 'lobby' : p), 1000)
         }
       })
 
@@ -83,34 +123,19 @@ export function PlayerRoom() {
   // ── No Supabase ─────────────────────────────────────────────────────────────
   if (!supabaseReady) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6 text-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center px-6 text-center">
         <div>
           <p className="text-2xl mb-3">⚙️</p>
-          <p className="text-slate-700 font-semibold mb-1">Sala no disponible</p>
+          <p className="text-white font-semibold mb-1">Sala no disponible</p>
           <p className="text-slate-400 text-sm">El multijugador no está configurado en este entorno.</p>
         </div>
       </div>
     )
   }
 
-  // ── Waiting screen ──────────────────────────────────────────────────────────
-  if (phase === 'waiting') {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6 px-6">
-        <WordMark size={20} dark={false} />
-        <div className="text-center">
-          <p className="text-slate-400 text-sm mb-1">Sala</p>
-          <p className="text-2xl font-mono font-bold text-indigo-600">{code}</p>
-        </div>
-        <div className="flex items-center gap-2 text-slate-400 text-sm">
-          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-          Esperando al presentador…
-        </div>
-        <p className="text-xs text-slate-400">
-          Conectado como <span className="text-slate-600 font-medium">{playerName}</span>
-        </p>
-      </div>
-    )
+  // ── Connecting / Lobby ──────────────────────────────────────────────────────
+  if (phase === 'connecting' || phase === 'lobby') {
+    return <LobbyWaiting playerName={playerName} code={code} connected={phase === 'lobby'} />
   }
 
   // ── Reveal screen ───────────────────────────────────────────────────────────
@@ -160,7 +185,6 @@ export function PlayerRoom() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col px-5 pt-10 pb-8">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <WordMark size={16} dark={false} />
         <div className="flex items-center gap-2">
@@ -175,7 +199,6 @@ export function PlayerRoom() {
         </div>
       </div>
 
-      {/* Module + title */}
       <div className="flex-1 flex flex-col justify-center">
         <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-3">
           {gameState?.module === 'email' ? 'Correo electrónico'

@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { supabase, supabaseReady } from '../lib/supabase'
 import { ALL_SCENARIOS } from '../data'
 import { WordMark } from '../components/ui/PhishLensLogo'
-import { ChevronRight, ChevronLeft, Eye, EyeOff, Users, Copy, Check, Trophy } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Eye, EyeOff, Users, Copy, Check, Trophy, Play } from 'lucide-react'
 
 const MODULE_LABEL = { email: 'Email', sms: 'SMS / WA', file: 'Archivo' }
 
@@ -21,9 +21,7 @@ function VoteBar({ label, count, total, color }) {
       <span className={`w-24 text-right text-xs font-bold ${color}`}>{label}</span>
       <div className="flex-1 h-7 bg-slate-100 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${
-            color === 'text-rose-600' ? 'bg-rose-400' : 'bg-emerald-400'
-          }`}
+          className={`h-full rounded-full transition-all duration-500 ${color === 'text-rose-600' ? 'bg-rose-400' : 'bg-emerald-400'}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -48,6 +46,7 @@ function PlayerPill({ name, voted }) {
 }
 
 function buildStatePayload(sc, ph) {
+  if (ph === 'lobby' || !sc) return { phase: 'lobby', scenarioId: null }
   return {
     scenarioId: sc.id,
     title: sc.content?.subject ?? sc.content?.from ?? sc.content?.filename ?? '',
@@ -61,9 +60,7 @@ function buildStatePayload(sc, ph) {
 const MEDAL = ['🥇', '🥈', '🥉']
 
 function Scoreboard({ scores, total, onClose }) {
-  const ranked = Object.values(scores)
-    .sort((a, b) => b.correct - a.correct || a.name.localeCompare(b.name))
-
+  const ranked = Object.values(scores).sort((a, b) => b.correct - a.correct || a.name.localeCompare(b.name))
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
       <div className="bg-white border border-slate-200 rounded-3xl p-8 w-full max-w-lg shadow-2xl">
@@ -72,34 +69,24 @@ function Scoreboard({ scores, total, onClose }) {
           <h2 className="text-2xl font-black text-slate-900">Marcador final</h2>
           <span className="ml-auto text-xs text-slate-400">{total} preguntas</span>
         </div>
-
         {ranked.length === 0 ? (
           <p className="text-slate-400 text-sm text-center py-8">Sin jugadores registrados</p>
         ) : (
           <div className="flex flex-col gap-3 mb-8">
             {ranked.map((p, i) => {
               const pct = total === 0 ? 0 : Math.round((p.correct / total) * 100)
-              const isTop = i < 3
               return (
-                <div
-                  key={p.playerId}
-                  className={`flex items-center gap-4 rounded-2xl px-5 py-3.5 border ${
-                    i === 0 ? 'bg-amber-50 border-amber-200'
-                    : i === 1 ? 'bg-slate-100 border-slate-200'
-                    : i === 2 ? 'bg-orange-50 border-orange-200'
-                    : 'bg-slate-50 border-slate-100'
-                  }`}
-                >
+                <div key={p.playerId} className={`flex items-center gap-4 rounded-2xl px-5 py-3.5 border ${
+                  i === 0 ? 'bg-amber-50 border-amber-200' : i === 1 ? 'bg-slate-100 border-slate-200' : i === 2 ? 'bg-orange-50 border-orange-200' : 'bg-slate-50 border-slate-100'
+                }`}>
                   <span className="text-xl w-7 text-center flex-shrink-0">
-                    {isTop ? MEDAL[i] : <span className="text-slate-400 text-sm font-bold">{i + 1}</span>}
+                    {i < 3 ? MEDAL[i] : <span className="text-slate-400 text-sm font-bold">{i + 1}</span>}
                   </span>
                   <span className="flex-1 font-semibold text-slate-800 truncate">{p.name}</span>
                   <div className="text-right flex-shrink-0">
-                    <span className={`text-lg font-black ${
-                      pct >= 80 ? 'text-emerald-600'
-                      : pct >= 50 ? 'text-amber-600'
-                      : 'text-rose-600'
-                    }`}>{p.correct}<span className="text-slate-300 font-normal text-sm">/{total}</span></span>
+                    <span className={`text-lg font-black ${pct >= 80 ? 'text-emerald-600' : pct >= 50 ? 'text-amber-600' : 'text-rose-600'}`}>
+                      {p.correct}<span className="text-slate-300 font-normal text-sm">/{total}</span>
+                    </span>
                     <div className="text-[10px] text-slate-400">{pct}% acierto</div>
                   </div>
                 </div>
@@ -107,11 +94,7 @@ function Scoreboard({ scores, total, onClose }) {
             })}
           </div>
         )}
-
-        <button
-          onClick={onClose}
-          className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors"
-        >
+        <button onClick={onClose} className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors">
           Cerrar
         </button>
       </div>
@@ -119,13 +102,119 @@ function Scoreboard({ scores, total, onClose }) {
   )
 }
 
+// ─── Lobby ────────────────────────────────────────────────────────────────────
+
+function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy }) {
+  const playerList = Object.values(players)
+  const count = playerList.length
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-8 py-4 border-b border-slate-100">
+        <WordMark size={16} dark={false} />
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-400">Código de sala:</span>
+          <button
+            onClick={onCopy}
+            className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-3 py-1.5 text-indigo-600 font-mono font-bold text-sm transition-colors"
+          >
+            {code}
+            {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} className="text-indigo-400" />}
+          </button>
+        </div>
+        <div className="flex items-center gap-1.5 text-slate-400 text-sm">
+          <Users size={14} />
+          <span>{count} jugador{count !== 1 ? 'es' : ''}</span>
+        </div>
+      </div>
+
+      {/* Main lobby */}
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-16 px-12 py-10">
+        {/* Left: room code + instructions */}
+        <div className="flex flex-col items-center lg:items-start gap-6 flex-1 max-w-md">
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Únete a la sala</p>
+            <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+              Escanea el QR o abre{' '}
+              <span className="font-mono text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded text-xs">
+                {window.location.host}/join
+              </span>{' '}
+              e introduce el código:
+            </p>
+            <div className="bg-slate-900 rounded-3xl px-10 py-6 text-center inline-block">
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-2">Código</p>
+              <p className="text-white font-mono font-black text-5xl tracking-wider">{code}</p>
+            </div>
+          </div>
+
+          {/* Players */}
+          <div className="w-full">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+              {count === 0 ? 'Esperando jugadores…' : `${count} jugador${count !== 1 ? 'es' : ''} listo${count !== 1 ? 's' : ''}`}
+            </p>
+            {count === 0 ? (
+              <div className="flex items-center gap-2 text-slate-300 text-sm">
+                <span className="w-2 h-2 rounded-full bg-slate-300 animate-pulse" />
+                <span>Nadie se ha unido todavía</span>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {playerList.map((p, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-50 border border-emerald-200 text-emerald-700 animate-[fadeIn_0.3s_ease]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right: QR */}
+        <div className="flex flex-col items-center gap-4 flex-shrink-0">
+          <div className="bg-white p-5 rounded-3xl border-2 border-slate-100 shadow-lg">
+            <QRCodeSVG value={joinUrl} size={200} level="M" />
+          </div>
+          <p className="text-[11px] text-slate-400 font-mono text-center max-w-[220px] break-all">{joinUrl}</p>
+        </div>
+      </div>
+
+      {/* Start button */}
+      <div className="border-t border-slate-100 px-8 py-5 flex items-center justify-between">
+        <p className="text-sm text-slate-400">
+          {count === 0
+            ? 'Esperando a que se unan jugadores…'
+            : `${count} jugador${count !== 1 ? 'es' : ''} conectado${count !== 1 ? 's' : ''} — listo para empezar`}
+        </p>
+        <button
+          onClick={onStart}
+          className={`flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-base transition-all ${
+            count > 0
+              ? 'bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-lg shadow-indigo-200'
+              : 'bg-slate-100 text-slate-400 cursor-default'
+          }`}
+        >
+          <Play size={18} />
+          Empezar partida
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export function HostRoom() {
   const { code }   = useParams()
   const navigate   = useNavigate()
 
   const [players, setPlayers]               = useState({})
   const [votes, setVotes]                   = useState({})
-  const [phase, setPhase]                   = useState('question')
+  const [phase, setPhase]                   = useState('lobby')
   const [scenarioIndex, setScenarioIndex]   = useState(0)
   const [copied, setCopied]                 = useState(false)
   const [showScoreboard, setShowScoreboard] = useState(false)
@@ -135,17 +224,17 @@ export function HostRoom() {
   const SCENARIOS   = ALL_SCENARIOS
   const scenario    = SCENARIOS[scenarioIndex] ?? null
   const scenarioRef = useRef(scenario)
-  const phaseRef    = useRef('question')
+  const phaseRef    = useRef('lobby')
   const votesRef    = useRef({})
 
   useEffect(() => { scenarioRef.current = scenario }, [scenario])
   useEffect(() => { phaseRef.current = phase }, [phase])
   useEffect(() => { votesRef.current = votes }, [votes])
 
-  const joinUrl = `${window.location.origin}/join/${code}`
+  const joinUrl = `${window.location.origin}/join?code=${code}`
 
   function broadcastState(sc, ph) {
-    if (!channelRef.current || !sc) return
+    if (!channelRef.current) return
     channelRef.current.send({
       type: 'broadcast',
       event: 'game_state',
@@ -160,12 +249,7 @@ export function HostRoom() {
       Object.entries(currentVotes).forEach(([pid, vote]) => {
         const name = players[pid]?.name ?? pid
         if (!next[pid]) next[pid] = { playerId: pid, name, correct: 0, answered: 0 }
-        next[pid] = {
-          ...next[pid],
-          name,
-          answered: next[pid].answered + 1,
-          correct: next[pid].correct + (vote === correct ? 1 : 0),
-        }
+        next[pid] = { ...next[pid], name, answered: next[pid].answered + 1, correct: next[pid].correct + (vote === correct ? 1 : 0) }
       })
       return next
     })
@@ -204,13 +288,22 @@ export function HostRoom() {
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
           await channel.track({ role: 'host' })
-          broadcastState(SCENARIOS[0], 'question')
+          broadcastState(null, 'lobby')
         }
       })
 
     channelRef.current = channel
     return () => { supabase.removeChannel(channel) }
   }, [code])
+
+  function startGame() {
+    const firstSc = SCENARIOS[0]
+    setPhase('question')
+    phaseRef.current = 'question'
+    setScenarioIndex(0)
+    setVotes({})
+    broadcastState(firstSc, 'question')
+  }
 
   function goNext() {
     const next = scenarioIndex + 1
@@ -220,6 +313,7 @@ export function HostRoom() {
     setScenarioIndex(next)
     setVotes({})
     setPhase('question')
+    phaseRef.current = 'question'
     setPlayers((prev) => {
       const reset = {}
       Object.keys(prev).forEach((id) => { reset[id] = { ...prev[id], voted: false } })
@@ -235,6 +329,7 @@ export function HostRoom() {
     setScenarioIndex(prev)
     setVotes({})
     setPhase('question')
+    phaseRef.current = 'question'
     setPlayers((p) => {
       const reset = {}
       Object.keys(p).forEach((id) => { reset[id] = { ...p[id], voted: false } })
@@ -246,6 +341,7 @@ export function HostRoom() {
   function toggleReveal() {
     const next = phase === 'question' ? 'reveal' : 'question'
     setPhase(next)
+    phaseRef.current = next
     broadcastState(scenario, next)
   }
 
@@ -260,23 +356,28 @@ export function HostRoom() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const playerList  = Object.values(players)
-  const totalVoters = playerList.length
-  const phishingCnt = Object.values(votes).filter((v) => v === 'phishing').length
-  const legitCnt    = Object.values(votes).filter((v) => v === 'legit').length
-  const votedCnt    = phishingCnt + legitCnt
-  const isPhishing  = scenario?.isPhishing !== false
-  const isLast      = scenarioIndex >= SCENARIOS.length - 1
-
   if (!supabaseReady) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
           <p className="text-2xl mb-3">⚙️</p>
           <p className="text-slate-700 font-semibold mb-1">Multijugador no configurado</p>
-          <p className="text-slate-400 text-sm">Falta la clave de Supabase. Añade <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">VITE_SUPABASE_URL</code> y <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">VITE_SUPABASE_ANON_KEY</code> en tu <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">.env</code>.</p>
+          <p className="text-slate-400 text-sm">Falta la clave de Supabase en el entorno.</p>
         </div>
       </div>
+    )
+  }
+
+  if (phase === 'lobby') {
+    return (
+      <LobbyScreen
+        code={code}
+        joinUrl={joinUrl}
+        players={players}
+        onStart={startGame}
+        copied={copied}
+        onCopy={copyCode}
+      />
     )
   }
 
@@ -288,16 +389,19 @@ export function HostRoom() {
     )
   }
 
-  const levelStyle = LEVEL_STYLES[scenario.level] ?? LEVEL_STYLES.medium
+  const playerList  = Object.values(players)
+  const totalVoters = playerList.length
+  const phishingCnt = Object.values(votes).filter((v) => v === 'phishing').length
+  const legitCnt    = Object.values(votes).filter((v) => v === 'legit').length
+  const votedCnt    = phishingCnt + legitCnt
+  const isPhishing  = scenario?.isPhishing !== false
+  const isLast      = scenarioIndex >= SCENARIOS.length - 1
+  const levelStyle  = LEVEL_STYLES[scenario.level] ?? LEVEL_STYLES.medium
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {showScoreboard && (
-        <Scoreboard
-          scores={scores}
-          total={scenarioIndex + 1}
-          onClose={() => setShowScoreboard(false)}
-        />
+        <Scoreboard scores={scores} total={scenarioIndex + 1} onClose={() => setShowScoreboard(false)} />
       )}
 
       {/* Top bar */}
@@ -305,7 +409,6 @@ export function HostRoom() {
         <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:opacity-70 transition-opacity">
           <WordMark size={16} dark={false} />
         </button>
-
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-400">Código de sala:</span>
           <button
@@ -316,14 +419,12 @@ export function HostRoom() {
             {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} className="text-indigo-400" />}
           </button>
         </div>
-
         <div className="flex items-center gap-3">
           <button
             onClick={openScoreboard}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-slate-500 hover:text-amber-700 text-xs font-semibold transition-colors"
           >
-            <Trophy size={13} />
-            Marcador
+            <Trophy size={13} /> Marcador
           </button>
           <div className="flex items-center gap-1.5 text-slate-500 text-sm">
             <Users size={14} />
@@ -335,25 +436,20 @@ export function HostRoom() {
       <div className="flex flex-1 overflow-hidden">
         {/* Main area */}
         <div className="flex-1 flex flex-col p-8 gap-6">
-          {/* Scenario info */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                {MODULE_LABEL[scenario.module]}
-              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{MODULE_LABEL[scenario.module]}</span>
               <span className="text-slate-300">·</span>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${levelStyle.text}`}>
-                {levelStyle.label}
-              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-widest ${levelStyle.text}`}>{levelStyle.label}</span>
               <span className="text-slate-300">·</span>
               <span className="text-[10px] text-slate-400">{scenarioIndex + 1} / {SCENARIOS.length}</span>
             </div>
             <h1 className="text-3xl font-bold text-slate-900 leading-snug">
-              {scenario.content?.subject
-                ?? scenario.content?.from
-                ?? scenario.content?.filename
-                ?? `Escenario ${scenarioIndex + 1}`}
+              {scenario.content?.subject ?? scenario.content?.from ?? scenario.content?.filename ?? `Escenario ${scenarioIndex + 1}`}
             </h1>
+            {scenario.description && (
+              <p className="text-slate-500 text-sm mt-1">{scenario.description}</p>
+            )}
           </div>
 
           {/* Vote bars */}
@@ -368,9 +464,7 @@ export function HostRoom() {
 
           {/* Answer reveal */}
           {phase === 'reveal' && (
-            <div className={`rounded-2xl border p-5 flex items-center gap-4 ${
-              isPhishing ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'
-            }`}>
+            <div className={`rounded-2xl border p-5 flex items-center gap-4 ${isPhishing ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'}`}>
               <span className="text-4xl">{isPhishing ? '🎣' : '✅'}</span>
               <div>
                 <p className={`text-lg font-bold ${isPhishing ? 'text-rose-700' : 'text-emerald-700'}`}>
@@ -410,8 +504,7 @@ export function HostRoom() {
                 onClick={openScoreboard}
                 className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-amber-300 bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold text-sm transition-colors"
               >
-                <Trophy size={15} />
-                Ver marcador
+                <Trophy size={15} /> Ver marcador
               </button>
             ) : (
               <button
@@ -426,7 +519,6 @@ export function HostRoom() {
 
         {/* Right sidebar */}
         <div className="w-64 border-l border-slate-200 bg-white flex flex-col overflow-y-auto">
-          {/* QR section */}
           <div className="p-5 border-b border-slate-100">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Únete desde el móvil</p>
             <div className="flex justify-center">
@@ -434,10 +526,8 @@ export function HostRoom() {
                 <QRCodeSVG value={joinUrl} size={148} level="M" />
               </div>
             </div>
-            <p className="text-center text-[10px] text-slate-400 mt-3 font-mono">{joinUrl}</p>
+            <p className="text-center text-[10px] text-slate-400 mt-3 font-mono break-all">{joinUrl}</p>
           </div>
-
-          {/* Players section */}
           <div className="p-5 flex flex-col gap-3 flex-1">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Jugadores</p>
             {playerList.length === 0 ? (
