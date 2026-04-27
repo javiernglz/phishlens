@@ -194,20 +194,6 @@ function HeroVisual({ t }) {
     <div style={{width:430, flexShrink:0, position:'relative', paddingLeft:36}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
-      <div style={{display:'flex',justifyContent:'center',marginBottom:14}}>
-        <div style={{
-          display:'inline-flex',alignItems:'center',gap:6,
-          padding:'5px 12px',borderRadius:6,
-          background:t.isDark?'rgba(255,255,255,0.05)':'rgba(109,40,217,0.08)',
-          border:`1px solid ${t.isDark?'rgba(255,255,255,0.1)':'rgba(109,40,217,0.2)'}`,
-          fontSize:10.5,fontWeight:700,letterSpacing:'0.06em',textTransform:'uppercase',
-          color:t.isDark?'rgba(148,163,184,0.8)':'#6d28d9',
-        }}>
-          <span style={{width:6,height:6,borderRadius:'50%',background:'#4ade80',display:'inline-block',animation:'pulse 1.5s infinite'}}/>
-          Simulador en vivo
-        </div>
-      </div>
-
       <div style={{
         position:'relative', borderRadius:20,
         background: t.isDark ? 'rgba(8,18,38,0.97)' : '#ffffff',
