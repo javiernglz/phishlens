@@ -191,7 +191,7 @@ function HeroVisual({ t }) {
   const showResult = step === 2
 
   return (
-    <div style={{width:430, flexShrink:0, position:'relative', paddingLeft:36}}>
+    <div style={{width:400, flexShrink:0, position:'relative'}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
       <div style={{
@@ -306,64 +306,63 @@ function Hero({ t, onStart, onHost }) {
       fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif",
     }}>
       {/* Glow */}
-      <div style={{position:'absolute',top:'40%',left:'55%',transform:'translate(-50%,-50%)',width:800,height:500,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.22'):t.glow.replace('0.05','0.16')} 0%,transparent 65%)`,pointerEvents:'none'}}/>
+      <div style={{position:'absolute',top:'40%',left:'30%',transform:'translate(-50%,-50%)',width:700,height:500,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.22'):t.glow.replace('0.05','0.16')} 0%,transparent 65%)`,pointerEvents:'none'}}/>
       {/* Split right accent */}
       <div style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',background:t.isDark?'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)':'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)',clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',pointerEvents:'none'}}/>
 
-      <div style={{maxWidth:1140,margin:'0 auto',padding:'60px 32px',display:'flex',alignItems:'center',gap:64,position:'relative',zIndex:2,width:'100%',boxSizing:'border-box'}}>
-        <div style={{flex:1,minWidth:0}}>
-          {/* Badge */}
-          <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
-            <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
-            <span style={{fontSize:11,fontWeight:700,color:t.accent,letterSpacing:'0.07em',textTransform:'uppercase'}}>Simulador de phishing · Gratuito</span>
-          </div>
+      {/* Card — absolutely covers same 42% as the lilac panel, centered within it */}
+      <div className="hero-card-abs" style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',display:'none',alignItems:'center',justifyContent:'center',zIndex:3,paddingLeft:'4%'}}>
+        <HeroVisual t={t} />
+      </div>
+      <style>{`@media(min-width:900px){.hero-card-abs{display:flex!important}}`}</style>
 
-          <h1 style={{fontSize:'clamp(2.6rem,4.5vw,4rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
-            El phishing engaña<br/>a casi todos.
-            <br/><span style={{color:t.accent}}>¿A ti también?</span>
-          </h1>
-
-          <p style={{fontSize:17,lineHeight:1.7,color:t.muted,margin:'0 0 36px',maxWidth:440}}>
-            Simulaciones reales de correos, SMS y archivos maliciosos. Entrena tu instinto, juega en grupo y descubre cómo funcionan los ataques.
-          </p>
-
-          <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:44}}>
-            <Btn t={t} onClick={onStart} variant="primary">Empezar solo <span>→</span></Btn>
-            <Btn t={t} onClick={onHost} variant="blue">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              Multijugador
-            </Btn>
-          </div>
-
-          {/* Stats + modules */}
-          <div style={{borderTop:`1px solid ${t.border}`,paddingTop:24}}>
-            <div style={{display:'flex',gap:0,marginBottom:18}}>
-              {[{n:'20+',l:'escenarios'},{n:'3',l:'módulos'},{n:'∞',l:'partidas'}].map(({n,l},i) => (
-                <div key={l} style={{paddingRight:28,marginRight:28,borderRight:i<2?`1px solid ${t.border}`:'none'}}>
-                  <div style={{fontSize:22,fontWeight:800,color:t.text,letterSpacing:'-0.03em'}}>{n}</div>
-                  <div style={{fontSize:11,color:t.sub,fontWeight:500,marginTop:2}}>{l}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
-              {[
-                {label:'Email',    color:'#818cf8', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>},
-                {label:'SMS',      color:'#fb923c', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>},
-                {label:'Archivos', color:'#a78bfa', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>},
-              ].map(({label,color,icon}) => (
-                <div key={label} style={{display:'inline-flex',alignItems:'center',gap:5,padding:'5px 12px',borderRadius:6,fontSize:12,fontWeight:600,background:`${color}15`,border:`1px solid ${color}30`,color}}>
-                  {icon}{label}
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Text — constrained to left 58% */}
+      <div style={{width:'58%',boxSizing:'border-box',padding:'60px 48px 60px max(32px,6vw)',position:'relative',zIndex:2}}>
+        {/* Badge */}
+        <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
+          <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
+          <span style={{fontSize:11,fontWeight:700,color:t.accent,letterSpacing:'0.07em',textTransform:'uppercase'}}>Simulador de phishing · Gratuito</span>
         </div>
 
-        {/* Hero visual — hidden on mobile */}
-        <div className="hero-visual-wrap" style={{flexShrink:0,display:'none'}}>
-          <HeroVisual t={t} />
+        <h1 style={{fontSize:'clamp(2.4rem,3.8vw,3.8rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
+          El phishing engaña<br/>a casi todos.
+          <br/><span style={{color:t.accent}}>¿A ti también?</span>
+        </h1>
+
+        <p style={{fontSize:16,lineHeight:1.75,color:t.muted,margin:'0 0 36px',maxWidth:420}}>
+          Simulaciones reales de correos, SMS y archivos maliciosos. Entrena tu instinto, juega en grupo y descubre cómo funcionan los ataques.
+        </p>
+
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:44}}>
+          <Btn t={t} onClick={onStart} variant="primary">Empezar solo <span>→</span></Btn>
+          <Btn t={t} onClick={onHost} variant="blue">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Multijugador
+          </Btn>
         </div>
-        <style>{`@media(min-width:900px){.hero-visual-wrap{display:block!important}}`}</style>
+
+        {/* Stats + modules */}
+        <div style={{borderTop:`1px solid ${t.border}`,paddingTop:24}}>
+          <div style={{display:'flex',gap:0,marginBottom:18}}>
+            {[{n:'20+',l:'escenarios'},{n:'3',l:'módulos'},{n:'∞',l:'partidas'}].map(({n,l},i) => (
+              <div key={l} style={{paddingRight:28,marginRight:28,borderRight:i<2?`1px solid ${t.border}`:'none'}}>
+                <div style={{fontSize:22,fontWeight:800,color:t.text,letterSpacing:'-0.03em'}}>{n}</div>
+                <div style={{fontSize:11,color:t.sub,fontWeight:500,marginTop:2}}>{l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
+            {[
+              {label:'Email',    color:'#818cf8', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>},
+              {label:'SMS',      color:'#fb923c', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>},
+              {label:'Archivos', color:'#a78bfa', icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>},
+            ].map(({label,color,icon}) => (
+              <div key={label} style={{display:'inline-flex',alignItems:'center',gap:5,padding:'5px 12px',borderRadius:6,fontSize:12,fontWeight:600,background:`${color}15`,border:`1px solid ${color}30`,color}}>
+                {icon}{label}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
