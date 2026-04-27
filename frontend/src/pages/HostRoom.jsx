@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useDarkMode } from '../hooks/useDarkMode'
 import { QRCodeSVG } from 'qrcode.react'
 import { supabase, supabaseReady } from '../lib/supabase'
 import { ALL_SCENARIOS } from '../data'
@@ -144,7 +145,7 @@ function PillBtn({ active, onClick, children }) {
   )
 }
 
-function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer, questionCount, onQuestionCount, onHome }) {
+function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer, questionCount, onQuestionCount, onHome, dark, onToggleDark }) {
   const playerList    = Object.values(players)
   const count         = playerList.length
   const levels        = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
@@ -165,9 +166,14 @@ function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOpt
             {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} className="text-indigo-400" />}
           </button>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-400 text-sm">
-          <Users size={14} />
-          <span>{count} jugador{count!==1?'es':''}</span>
+        <div className="flex items-center gap-2">
+          <button onClick={onToggleDark} className="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 hover:text-slate-600 transition-colors text-sm">
+            {dark ? '☀' : '☾'}
+          </button>
+          <div className="flex items-center gap-1.5 text-slate-400 text-sm">
+            <Users size={14} />
+            <span>{count} jugador{count!==1?'es':''}</span>
+          </div>
         </div>
       </div>
 
@@ -301,6 +307,8 @@ function buildPayload(sc, ph, timerDuration) {
 export function HostRoom() {
   const { code } = useParams()
   const navigate = useNavigate()
+
+  const { dark, toggle: toggleDark } = useDarkMode()
 
   // Lobby settings
   const [levelOptionId, setLevelOptionId] = useState('all')
@@ -514,6 +522,7 @@ export function HostRoom() {
         timerDuration={timerDuration} onTimer={setTimerDuration}
         questionCount={questionCount} onQuestionCount={setQuestionCount}
         onHome={() => navigate('/')}
+        dark={dark} onToggleDark={toggleDark}
       />
     )
   }
@@ -554,6 +563,9 @@ export function HostRoom() {
         </div>
         <div className="flex-1" />
         <TimerCircle timeLeft={timeLeft} total={timerDuration} />
+        <button onClick={toggleDark} className="w-7 h-7 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 hover:text-slate-600 transition-colors text-sm flex-shrink-0">
+          {dark ? '☀' : '☾'}
+        </button>
         <button onClick={openScoreboard} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-slate-400 hover:text-amber-600 text-xs font-semibold transition-colors">
           <Trophy size={12} /> Marcador
         </button>

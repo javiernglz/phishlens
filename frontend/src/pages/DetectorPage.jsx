@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, RotateCcw } from 'lucide-react'
 import { WordMark } from '../components/ui/PhishLensLogo'
 import { analyzePhishing } from '../lib/phishingDetector'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 // ─── Config ────────────────────────────────────────────────────────────────
 
@@ -34,7 +35,7 @@ function saveHistory(entries) {
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
-function TopBar({ onHome }) {
+function TopBar({ onHome, dark, onToggleDark }) {
   return (
     <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4">
       <button
@@ -46,6 +47,11 @@ function TopBar({ onHome }) {
       </button>
       <div className="w-px h-4 bg-slate-200" />
       <WordMark size={14} dark={false} />
+      <div className="ml-auto">
+        <button onClick={onToggleDark} className="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 hover:text-slate-700 hover:border-slate-300 transition-colors text-sm">
+          {dark ? '☀' : '☾'}
+        </button>
+      </div>
     </div>
   )
 }
@@ -306,6 +312,7 @@ function HistorySection({ history, onRestore, onClear }) {
 
 export function DetectorPage() {
   const navigate = useNavigate()
+  const { dark, toggle: toggleDark } = useDarkMode()
   const [tab, setTab] = useState('text')
   const [text, setText] = useState('')
   const [imageFile, setImageFile] = useState(null)
@@ -393,7 +400,7 @@ export function DetectorPage() {
 
   return (
     <div className="min-h-screen bg-slate-50" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <TopBar onHome={() => navigate('/')} />
+      <TopBar onHome={() => navigate('/')} dark={dark} onToggleDark={toggleDark} />
 
       <div className="max-w-2xl mx-auto px-4 py-10">
 

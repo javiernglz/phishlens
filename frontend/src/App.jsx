@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { useDarkMode } from './hooks/useDarkMode'
 import { Sidebar } from './components/layout/Sidebar'
 import { SimulatorStage } from './components/simulator/SimulatorStage'
 import { ModuleResult } from './components/simulator/ModuleResult'
@@ -16,7 +17,7 @@ function SoloApp() {
   const navigate = useNavigate()
   const [started, setStarted] = useState(false)
   const [showingResults, setShowingResults] = useState(false)
-  const [dark, setDark] = useState(false)
+  const { dark, toggle: toggleDark } = useDarkMode()
   const sim = useSimulator()
   const currentAnswer = sim.activeScenario ? sim.answers[sim.activeScenario.id] : undefined
 
@@ -59,7 +60,7 @@ function SoloApp() {
     <div className={`simulator-root flex ${dark ? 'bg-slate-950' : 'bg-slate-100'}`}>
       <Sidebar
         dark={dark}
-        onToggleDark={() => setDark((d) => !d)}
+        onToggleDark={toggleDark}
         activeModule={sim.activeModule}
         activeScenarioId={sim.activeScenarioId}
         xrayActive={sim.xrayActive}

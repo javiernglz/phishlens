@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 // ── Global CSS ──────────────────────────────────────────────────────────────
 
@@ -793,13 +794,13 @@ function Footer({ t }) {
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export function LandingPage({ onStart, onHost, onDetect }) {
-  const [dark, setDark] = useState(false)
+  const { dark, toggle } = useDarkMode()
   const t = mkTheme(dark, 'indigo')
 
   return (
     <div style={{background:t.bg,color:t.text,minHeight:'100vh',transition:'background 0.3s,color 0.3s',fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif"}}>
       <style>{GLOBAL_CSS}</style>
-      <Nav t={t} dark={dark} onToggleDark={() => setDark(d => !d)} />
+      <Nav t={t} dark={dark} onToggleDark={toggle} />
       <Hero t={t} onStart={onStart} onHost={onHost} />
       <MultiplayerSection t={t} onHost={onHost} />
       <DetectorSection t={t} onDetect={onDetect} />
