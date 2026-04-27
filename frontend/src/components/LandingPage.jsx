@@ -191,7 +191,7 @@ function HeroVisual({ t }) {
   const showResult = step === 2
 
   return (
-    <div style={{width:430, flexShrink:0, position:'relative', paddingLeft:36}}>
+    <div style={{width:390, flexShrink:0, position:'relative'}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
       <div style={{
@@ -298,20 +298,27 @@ function HeroVisual({ t }) {
 // ── Hero ─────────────────────────────────────────────────────────────────────
 
 function Hero({ t, onStart, onHost }) {
+  const rightBg = t.isDark
+    ? 'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)'
+    : 'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)'
+
   return (
     <section style={{
-      minHeight:'100vh', background:t.bg, paddingTop:60,
-      display:'flex', flexDirection:'column', justifyContent:'center',
-      position:'relative', overflow:'hidden',
+      minHeight:'100vh', paddingTop:60,
+      display:'flex', overflow:'hidden',
       fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif",
+      background: t.bg,
     }}>
-      {/* Glow */}
-      <div style={{position:'absolute',top:'40%',left:'55%',transform:'translate(-50%,-50%)',width:800,height:500,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.22'):t.glow.replace('0.05','0.16')} 0%,transparent 65%)`,pointerEvents:'none'}}/>
-      {/* Split right accent */}
-      <div style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',background:t.isDark?'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)':'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)',clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',pointerEvents:'none'}}/>
+      {/* Left column — text */}
+      <div style={{
+        flex:1, display:'flex', alignItems:'center',
+        padding:'60px 64px 60px 8%',
+        position:'relative',
+      }}>
+        {/* Subtle glow near the split */}
+        <div style={{position:'absolute',top:'40%',right:0,transform:'translateY(-50%)',width:500,height:400,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.18'):t.glow.replace('0.05','0.12')} 0%,transparent 70%)`,pointerEvents:'none'}}/>
 
-      <div style={{maxWidth:1140,margin:'0 auto',padding:'60px 32px',display:'flex',alignItems:'center',gap:64,position:'relative',zIndex:2,width:'100%',boxSizing:'border-box'}}>
-        <div style={{flex:1,minWidth:0}}>
+        <div style={{maxWidth:520, width:'100%', position:'relative', zIndex:2}}>
           {/* Badge */}
           <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
@@ -358,13 +365,20 @@ function Hero({ t, onStart, onHost }) {
             </div>
           </div>
         </div>
-
-        {/* Hero visual — hidden on mobile */}
-        <div className="hero-visual-wrap" style={{flexShrink:0,display:'none'}}>
-          <HeroVisual t={t} />
-        </div>
-        <style>{`@media(min-width:900px){.hero-visual-wrap{display:block!important}}`}</style>
       </div>
+
+      {/* Right column — lilac bg, card centered */}
+      <div className="hero-visual-col" style={{
+        flexShrink:0, width:'42%',
+        background: rightBg,
+        clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',
+        display:'flex', flexDirection:'column',
+        alignItems:'center', justifyContent:'center',
+        padding:'80px 48px',
+      }}>
+        <HeroVisual t={t} />
+      </div>
+      <style>{`@media(max-width:899px){.hero-visual-col{display:none!important}}`}</style>
     </section>
   )
 }
