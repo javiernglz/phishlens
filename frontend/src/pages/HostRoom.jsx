@@ -29,6 +29,8 @@ const TIMER_OPTIONS = [
   { value: 60,   label: '1 min' },
 ]
 
+const QUESTION_COUNT_OPTIONS = [null, 5, 10, 15, 20]
+
 const LEVEL_STYLE = {
   easy:   { text: 'text-emerald-600', label: 'Fácil'   },
   medium: { text: 'text-amber-600',   label: 'Medio'   },
@@ -142,11 +144,12 @@ function PillBtn({ active, onClick, children }) {
   )
 }
 
-function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer }) {
-  const playerList   = Object.values(players)
-  const count        = playerList.length
-  const levels       = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
-  const scenarioCount = ALL_SCENARIOS.filter(s => levels.includes(s.level)).length
+function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer, questionCount, onQuestionCount }) {
+  const playerList    = Object.values(players)
+  const count         = playerList.length
+  const levels        = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
+  const availableCount = ALL_SCENARIOS.filter(s => levels.includes(s.level)).length
+  const finalCount    = questionCount ? Math.min(questionCount, availableCount) : availableCount
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -180,7 +183,28 @@ function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOpt
                 </PillBtn>
               ))}
             </div>
-            <p className="text-xs text-slate-400 mt-2">{scenarioCount} escenarios seleccionados</p>
+            <p className="text-xs text-slate-400 mt-2">{availableCount} escenarios disponibles</p>
+          </div>
+
+          {/* Question count */}
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Número de preguntas</p>
+            <div className="flex flex-wrap gap-2">
+              {QUESTION_COUNT_OPTIONS.map(opt => {
+                const label = opt === null ? 'Todas' : opt > availableCount ? null : String(opt)
+                if (label === null) return null
+                return (
+                  <PillBtn key={String(opt)} active={questionCount===opt} onClick={() => onQuestionCount(opt)}>
+                    {label}
+                  </PillBtn>
+                )
+              })}
+            </div>
+            <p className="text-xs text-slate-400 mt-2">
+              {questionCount && questionCount < availableCount
+                ? `${questionCount} al azar de ${availableCount}`
+                : `${availableCount} en orden aleatorio`}
+            </p>
           </div>
 
           {/* Timer */}
@@ -235,11 +259,11 @@ function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOpt
       {/* Start button */}
       <div className="border-t border-slate-100 px-8 py-5 flex items-center justify-between">
         <p className="text-sm text-slate-400">
-          {count===0 ? 'Esperando jugadores…' : `${count} jugador${count!==1?'es':''} · ${scenarioCount} escenarios · ${timerDuration ? timerDuration+'s por pregunta' : 'sin límite de tiempo'}`}
+          {count===0 ? 'Esperando jugadores…' : `${count} jugador${count!==1?'es':''} · ${finalCount} preguntas · ${timerDuration ? timerDuration+'s por pregunta' : 'sin límite de tiempo'}`}
         </p>
         <button
           onClick={onStart}
-          disabled={scenarioCount===0}
+          disabled={finalCount===0}
           className={`flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-base transition-all ${
             scenarioCount>0
               ? 'bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-lg shadow-indigo-200'
@@ -279,6 +303,7 @@ export function HostRoom() {
   // Lobby settings
   const [levelOptionId, setLevelOptionId] = useState('all')
   const [timerDuration, setTimerDuration] = useState(null)
+  const [questionCount, setQuestionCount] = useState(null)
 
   // Game state
   const [scenarios, setScenarios]           = useState([])
@@ -393,11 +418,13 @@ export function HostRoom() {
   }
 
   function startGame() {
-    const lvls    = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
+    const lvls     = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
     const filtered = ALL_SCENARIOS.filter(s => lvls.includes(s.level))
     if (filtered.length === 0) return
-    setScenarios(filtered)
-    scenariosRef.current = filtered
+    const shuffled = [...filtered].sort(() => Math.random() - 0.5)
+    const final    = questionCount ? shuffled.slice(0, questionCount) : shuffled
+    setScenarios(final)
+    scenariosRef.current = final
     setScenarioIndex(0)
     setVotes({})
     setPhase('question')
@@ -483,6 +510,7 @@ export function HostRoom() {
         copied={copied} onCopy={copyCode}
         levelOptionId={levelOptionId} onLevelOption={setLevelOptionId}
         timerDuration={timerDuration} onTimer={setTimerDuration}
+        questionCount={questionCount} onQuestionCount={setQuestionCount}
       />
     )
   }
