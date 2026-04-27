@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, RotateCcw } from 'lucide-react'
 import { WordMark } from '../components/ui/PhishLensLogo'
@@ -20,6 +20,17 @@ const SEVERITY = {
 }
 
 const HAS_KEY = !!import.meta.env.VITE_GROQ_KEY
+
+const HISTORY_KEY = 'phishlens_detector_history'
+const MAX_HISTORY = 10
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]') } catch { return [] }
+}
+
+function saveHistory(entries) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch {}
+}
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
@@ -246,6 +257,51 @@ function ResultCard({ result, onReset }) {
   )
 }
 
+// ─── History ──────────────────────────────────────────────────────────────
+
+const VERDICT_MINI = {
+  phishing:   { label: 'Phishing',   dot: '#dc2626', bg: '#fef2f2', text: '#b91c1c' },
+  suspicious: { label: 'Sospechoso', dot: '#d97706', bg: '#fffbeb', text: '#92400e' },
+  legitimate: { label: 'Legítimo',   dot: '#16a34a', bg: '#f0fdf4', text: '#15803d' },
+}
+
+function HistorySection({ history, onRestore, onClear }) {
+  if (history.length === 0) return null
+  return (
+    <div className="mt-10">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Análisis recientes</span>
+        <button onClick={onClear} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          Borrar historial
+        </button>
+      </div>
+      <div className="flex flex-col gap-2">
+        {history.map((entry) => {
+          const v = VERDICT_MINI[entry.verdict] ?? VERDICT_MINI.suspicious
+          return (
+            <button
+              key={entry.id}
+              onClick={() => onRestore(entry)}
+              className="w-full text-left bg-white border border-slate-200 rounded-xl px-4 py-3 hover:border-slate-300 hover:bg-slate-50 transition-all flex items-center gap-3"
+            >
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: v.dot }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-slate-600 truncate">{entry.preview}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: v.bg, color: v.text }}>
+                  {v.label}
+                </span>
+                <span className="text-[10px] text-slate-400">{entry.date}</span>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────
 
 export function DetectorPage() {
@@ -258,6 +314,7 @@ export function DetectorPage() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [retryIn, setRetryIn] = useState(null)
+  const [history, setHistory] = useState(loadHistory)
   const countdownRef = useRef(null)
 
   function handleFile(file) {
@@ -312,6 +369,20 @@ export function DetectorPage() {
       const data = await analyzePhishing({ text: text.trim() || null, image: imageB64, onRetry: startCountdown })
       setResult(data)
       setStatus('done')
+      const entry = {
+        id: Date.now(),
+        verdict: data.verdict,
+        preview: text.trim()
+          ? text.trim().slice(0, 80)
+          : '📷 Captura de pantalla',
+        date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        result: data,
+      }
+      setHistory((prev) => {
+        const next = [entry, ...prev].slice(0, MAX_HISTORY)
+        saveHistory(next)
+        return next
+      })
     } catch (e) {
       setError(e.message || 'Error al analizar el contenido')
       setStatus('error')
@@ -401,6 +472,18 @@ export function DetectorPage() {
         {status === 'done' && result && (
           <ResultCard result={result} onReset={reset} />
         )}
+
+        <HistorySection
+          history={history}
+          onRestore={(entry) => {
+            setResult(entry.result)
+            setStatus('done')
+          }}
+          onClear={() => {
+            setHistory([])
+            saveHistory([])
+          }}
+        />
       </div>
     </div>
   )

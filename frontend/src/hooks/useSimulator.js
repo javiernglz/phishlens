@@ -1,5 +1,23 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ALL_SCENARIOS } from '../data'
+
+const STORAGE_KEY = 'phishlens_progress'
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+
+function saveProgress(answers) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(answers))
+  } catch {}
+}
 
 const INITIAL_MODULE = 'email'
 const initialScenario = ALL_SCENARIOS.find((s) => s.module === INITIAL_MODULE)
@@ -10,7 +28,9 @@ export function useSimulator() {
   const [xrayActive, setXrayActive] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [activeHotspotId, setActiveHotspotId] = useState(null)
-  const [answers, setAnswers] = useState({})
+  const [answers, setAnswers] = useState(loadProgress)
+
+  useEffect(() => { saveProgress(answers) }, [answers])
 
   const activeScenario = ALL_SCENARIOS.find((s) => s.id === activeScenarioId) ?? null
 
