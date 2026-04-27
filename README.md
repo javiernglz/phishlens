@@ -10,7 +10,7 @@ Simulador interactivo de phishing para concienciación en ciberseguridad. Interf
 
 ### Simulador en modo solo
 - **3 módulos**: Email (interfaz Gmail), SMS/WhatsApp (iMessage + WhatsApp), Archivos (Finder macOS)
-- **39 escenarios** en 3 niveles de dificultad — la mitad son legítimos, no puedes adivinar
+- **35 escenarios** en 3 niveles de dificultad — la mitad son legítimos, no puedes adivinar
 - **SMS y WhatsApp separados** visualmente dentro del mismo módulo
 - **X-Ray**: al votar se activa un escáner que ilumina cada señal de ataque con hotspots explicados
 - **Progreso persistente** — las respuestas se guardan en localStorage y sobreviven al cierre del navegador

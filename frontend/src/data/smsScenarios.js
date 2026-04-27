@@ -176,52 +176,6 @@ export const smsScenarios = [
   },
 
   {
-    id: 'sms-medium-001',
-    module: 'sms',
-    isPhishing: true,
-    level: 'medium',
-    title: 'Paquete Retenido — Correos',
-    description: 'Smishing clásico suplantando el servicio de paquetería',
-    content: {
-      platform: 'sms',
-      sender: 'CORREOS',
-      senderName: 'CORREOS',
-      messages: [
-        {
-          from: 'them',
-          text: 'CORREOS: Su paquete (ES928471623) no pudo ser entregado por dirección incompleta. Pague 1,89€ de gastos de gestión para reprogramar la entrega:',
-          time: '12:31',
-        },
-        {
-          from: 'them',
-          type: 'link',
-          text: 'correos-envios.com/reprogramar',
-          time: '12:31',
-        },
-        {
-          from: 'them',
-          text: 'El paquete será devuelto al remitente en 48h si no se realiza el pago.',
-          time: '12:31',
-        },
-      ],
-    },
-    hotspots: [
-      {
-        targetId: 'hs-sender',
-        label: 'Remitente Suplantado',
-        severity: 'warning',
-        explanation: 'El nombre "CORREOS" puede ser falsificado mediante SMS spoofing. El dominio oficial es correos.es. Puede incluso aparecer en el mismo hilo que mensajes legítimos de Correos.',
-      },
-      {
-        targetId: 'hs-link',
-        label: 'Cobro Falso + Dominio Fraudulento',
-        severity: 'danger',
-        explanation: 'Correos nunca solicita pagos por SMS. "correos-envios.com" no es el dominio oficial. El importe pequeño (1,89€) está diseñado para que bajes la guardia y no dudes.',
-      },
-    ],
-  },
-
-  {
     id: 'wa-medium-001',
     module: 'sms',
     isPhishing: true,
@@ -496,47 +450,6 @@ export const smsScenarios = [
   },
 
   {
-    id: 'sms-hard-002',
-    module: 'sms',
-    isPhishing: true,
-    level: 'hard',
-    title: 'Devolución IRPF — AEAT',
-    description: 'Smishing suplantando a Hacienda sincronizado con la campaña de la Renta',
-    content: {
-      platform: 'sms',
-      sender: 'AEAT',
-      senderName: 'AEAT',
-      messages: [
-        {
-          from: 'them',
-          text: 'AEAT: Tiene una devolución de IRPF pendiente por importe de 348,72€. Acceda a su espacio personal para confirmar su cuenta bancaria y gestionar el cobro:',
-          time: '10:07',
-        },
-        {
-          from: 'them',
-          type: 'link',
-          text: 'agencia-tributaria.devoluciones-irpf.com/acceso',
-          time: '10:07',
-        },
-      ],
-    },
-    hotspots: [
-      {
-        targetId: 'hs-sender',
-        label: 'Remitente AEAT Falsificado',
-        severity: 'warning',
-        explanation: 'El nombre "AEAT" puede ser suplantado mediante SMS spoofing, igual que "CORREOS" o "SANTANDER". El mensaje puede incluso aparecer en el mismo hilo que SMS legítimos de Hacienda. La clave: la AEAT nunca pide datos bancarios por SMS — las devoluciones se ingresan automáticamente en la cuenta que declaraste en la Renta.',
-      },
-      {
-        targetId: 'hs-link',
-        label: 'Dominio Falso + Recolección Bancaria',
-        severity: 'danger',
-        explanation: 'El dominio real de la Agencia Tributaria es "sede.agenciatributaria.gob.es". "agencia-tributaria.devoluciones-irpf.com" imita el nombre oficial pero es un dominio .com fraudulento. La campaña coincide con la época de la Renta — los atacantes sincronizan estos SMS con fechas reales para que el importe y el contexto parezcan creíbles.',
-      },
-    ],
-  },
-
-  {
     id: 'wa-hard-002',
     module: 'sms',
     isPhishing: true,
@@ -614,35 +527,6 @@ export const smsScenarios = [
         label: 'OTP Legítimo — Sin Enlace',
         severity: 'safe',
         explanation: 'Un SMS OTP real solo contiene el código, el importe, el comercio y un teléfono al que llamar. Nunca incluye un enlace para "validar" ni te pide que introduzcas nada en ningún sitio. Si alguien te llama haciéndose pasar por CaixaBank y te pide que le leas este código, es un ataque de vishing — cuelga y llama tú al 900 40 40 90.',
-      },
-    ],
-  },
-
-  {
-    id: 'sms-legit-hard-003',
-    module: 'sms',
-    isPhishing: false,
-    level: 'hard',
-    title: 'Código de Acceso Santander',
-    description: 'OTP de inicio de sesión real — mismo remitente que el smishing de Santander',
-    content: {
-      platform: 'sms',
-      sender: 'SANTANDER',
-      senderName: 'Santander',
-      messages: [
-        {
-          from: 'them',
-          text: 'Santander: Código de acceso: 492731. No lo compartas con nadie. Si no lo has solicitado, llama al 91 512 33 36.',
-          time: '10:03',
-        },
-      ],
-    },
-    hotspots: [
-      {
-        targetId: 'hs-sender',
-        label: 'Mismo Remitente, Mensaje Completamente Distinto',
-        severity: 'safe',
-        explanation: 'El remitente "SANTANDER" es idéntico al que usan los atacantes — puede incluso aparecer en el mismo hilo de conversación que SMS fraudulentos. La diferencia está en el contenido: este SMS te da un código que tú has pedido, da un teléfono oficial y no contiene ningún enlace de acción. Un banco real nunca te pide el código que te acaba de enviar.',
       },
     ],
   },

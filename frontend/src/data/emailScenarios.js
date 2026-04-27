@@ -595,58 +595,6 @@ export const emailScenarios = [
   // ─── HARD ─────────────────────────────────────────────────────────────────
 
   {
-    id: 'email-legit-hard-001',
-    module: 'email',
-    isPhishing: false,
-    level: 'hard',
-    title: 'Aviso de Mantenimiento TI',
-    description: 'Comunicado interno de IT que podría confundirse con phishing',
-    content: {
-      fromDisplay: 'Soporte TIC — ACME Corp.',
-      fromEmail: 'tic@acme-corp.es',
-      to: 'empleados@acme-corp.es',
-      subject: 'Mantenimiento programado — sistemas internos (domingo 27 abr., 02:00-06:00)',
-      date: '25 abr. 2026, 09:00',
-      avatarColor: '#0ea5e9',
-      avatarInitial: 'T',
-      body: [
-        {
-          type: 'brand-header',
-          bg: '#0f172a',
-          icon: 'A',
-          iconBg: '#0ea5e9',
-          iconColor: '#ffffff',
-          text: 'ACME Corp. · Soporte TIC',
-          color: '#cbd5e1',
-          fontSize: 13,
-          letterSpacing: 0.5,
-        },
-        { type: 'text', value: 'Estimados compañeros,' },
-        { type: 'spacer' },
-        { type: 'text', value: 'El próximo domingo 27 de abril, entre las 02:00 y las 06:00 h, realizaremos tareas de mantenimiento en los servidores internos. Durante este periodo los sistemas de correo, VPN y SharePoint no estarán disponibles.' },
-        { type: 'spacer' },
-        { type: 'text', value: 'No es necesario realizar ninguna acción por vuestra parte. Si tenéis dudas, contactad directamente con el departamento TIC al ext. 1100.' },
-        { type: 'divider' },
-        { type: 'caption', value: 'Departamento de TIC · ACME Corp.\next. 1100 · tic@acme-corp.es' },
-      ],
-    },
-    hotspots: [
-      {
-        targetId: 'hs-sender',
-        label: 'Dominio Corporativo Legítimo',
-        severity: 'safe',
-        explanation: '"tic@acme-corp.es" usa el mismo dominio corporativo de la empresa. Contrasta con el ataque de spear phishing donde el dominio es "acme-c0rp.es" (con cero en lugar de la "o"). Aquí es idéntico al dominio real.',
-      },
-      {
-        targetId: 'hs-subject',
-        label: 'Sin Urgencia ni Enlace de Acción',
-        severity: 'safe',
-        explanation: 'El asunto especifica fecha y hora concretas sin exclamaciones ni presión emocional. El cuerpo no incluye ningún botón ni enlace de acción. Los avisos legítimos de TI informan sin pedir credenciales ni clics urgentes.',
-      },
-    ],
-  },
-
-  {
     id: 'email-hard-001',
     module: 'email',
     isPhishing: true,
