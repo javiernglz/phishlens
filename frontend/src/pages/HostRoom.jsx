@@ -144,7 +144,7 @@ function PillBtn({ active, onClick, children }) {
   )
 }
 
-function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer, questionCount, onQuestionCount }) {
+function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOptionId, onLevelOption, timerDuration, onTimer, questionCount, onQuestionCount, onHome }) {
   const playerList    = Object.values(players)
   const count         = playerList.length
   const levels        = LEVEL_OPTIONS.find(o => o.id === levelOptionId)?.levels ?? ['easy','medium','hard']
@@ -155,7 +155,9 @@ function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOpt
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-8 py-4 border-b border-slate-100">
-        <WordMark size={16} dark={false} />
+        <button onClick={onHome} className="hover:opacity-70 transition-opacity">
+          <WordMark size={16} dark={false} />
+        </button>
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-400">Código:</span>
           <button onClick={onCopy} className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-3 py-1.5 text-indigo-600 font-mono font-bold text-sm transition-colors">
@@ -511,6 +513,7 @@ export function HostRoom() {
         levelOptionId={levelOptionId} onLevelOption={setLevelOptionId}
         timerDuration={timerDuration} onTimer={setTimerDuration}
         questionCount={questionCount} onQuestionCount={setQuestionCount}
+        onHome={() => navigate('/')}
       />
     )
   }
