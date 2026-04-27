@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseReady } from '../lib/supabase'
 import { ALL_SCENARIOS } from '../data'
 import { WordMark } from '../components/ui/PhishLensLogo'
 import { ChevronRight, ChevronLeft, Eye, EyeOff, Users, Copy, Check, Trophy } from 'lucide-react'
@@ -172,6 +172,7 @@ export function HostRoom() {
   }
 
   useEffect(() => {
+    if (!supabase) return
     const channel = supabase.channel(`room:${code}`, {
       config: { presence: { key: 'host' } },
     })
@@ -266,6 +267,18 @@ export function HostRoom() {
   const votedCnt    = phishingCnt + legitCnt
   const isPhishing  = scenario?.isPhishing !== false
   const isLast      = scenarioIndex >= SCENARIOS.length - 1
+
+  if (!supabaseReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+        <div className="text-center max-w-sm">
+          <p className="text-2xl mb-3">⚙️</p>
+          <p className="text-slate-700 font-semibold mb-1">Multijugador no configurado</p>
+          <p className="text-slate-400 text-sm">Falta la clave de Supabase. Añade <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">VITE_SUPABASE_URL</code> y <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">VITE_SUPABASE_ANON_KEY</code> en tu <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">.env</code>.</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!scenario) {
     return (

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseReady } from '../lib/supabase'
 import { getOrCreatePlayerId } from '../lib/roomUtils'
 import { WordMark } from '../components/ui/PhishLensLogo'
 
@@ -29,6 +29,7 @@ export function PlayerRoom() {
   useEffect(() => { myVoteRef.current = myVote }, [myVote])
 
   useEffect(() => {
+    if (!supabase) return
     const channel = supabase.channel(`room:${code}`, {
       config: { presence: { key: playerId } },
     })
@@ -77,6 +78,19 @@ export function PlayerRoom() {
       event: 'vote',
       payload: { playerId, name: playerName, vote },
     })
+  }
+
+  // ── No Supabase ─────────────────────────────────────────────────────────────
+  if (!supabaseReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6 text-center">
+        <div>
+          <p className="text-2xl mb-3">⚙️</p>
+          <p className="text-slate-700 font-semibold mb-1">Sala no disponible</p>
+          <p className="text-slate-400 text-sm">El multijugador no está configurado en este entorno.</p>
+        </div>
+      </div>
+    )
   }
 
   // ── Waiting screen ──────────────────────────────────────────────────────────
