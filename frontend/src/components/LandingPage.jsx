@@ -191,7 +191,7 @@ function HeroVisual({ t }) {
   const showResult = step === 2
 
   return (
-    <div style={{width:390, flexShrink:0, position:'relative'}}>
+    <div style={{width:430, flexShrink:0, position:'relative', paddingLeft:36}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
       <div style={{
@@ -298,39 +298,32 @@ function HeroVisual({ t }) {
 // ── Hero ─────────────────────────────────────────────────────────────────────
 
 function Hero({ t, onStart, onHost }) {
-  const rightBg = t.isDark
-    ? 'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)'
-    : 'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)'
-
   return (
     <section style={{
-      minHeight:'100vh', paddingTop:60,
-      display:'flex', overflow:'hidden',
+      minHeight:'100vh', background:t.bg, paddingTop:60,
+      display:'flex', flexDirection:'column', justifyContent:'center',
+      position:'relative', overflow:'hidden',
       fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif",
-      background: t.bg,
     }}>
-      {/* Left column — fills 58%, text right-aligned towards the split */}
-      <div style={{
-        flex:'0 0 58%',
-        display:'flex', alignItems:'center', justifyContent:'flex-end',
-        padding:'60px 7% 60px 5%',
-        position:'relative',
-      }}>
-        <div style={{position:'absolute',top:'40%',right:'8%',transform:'translateY(-50%)',width:400,height:400,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.18'):t.glow.replace('0.05','0.12')} 0%,transparent 70%)`,pointerEvents:'none'}}/>
+      {/* Glow */}
+      <div style={{position:'absolute',top:'40%',left:'55%',transform:'translate(-50%,-50%)',width:800,height:500,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.22'):t.glow.replace('0.05','0.16')} 0%,transparent 65%)`,pointerEvents:'none'}}/>
+      {/* Split right accent */}
+      <div style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',background:t.isDark?'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)':'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)',clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',pointerEvents:'none'}}/>
 
-        <div style={{width:'100%', maxWidth:580, position:'relative', zIndex:2}}>
+      <div style={{maxWidth:1140,margin:'0 auto',padding:'60px 32px',display:'flex',alignItems:'center',gap:64,position:'relative',zIndex:2,width:'100%',boxSizing:'border-box'}}>
+        <div style={{flex:1,minWidth:0}}>
           {/* Badge */}
           <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
             <span style={{fontSize:11,fontWeight:700,color:t.accent,letterSpacing:'0.07em',textTransform:'uppercase'}}>Simulador de phishing · Gratuito</span>
           </div>
 
-          <h1 style={{fontSize:'clamp(2.4rem,4vw,3.8rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
+          <h1 style={{fontSize:'clamp(2.6rem,4.5vw,4rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
             El phishing engaña<br/>a casi todos.
             <br/><span style={{color:t.accent}}>¿A ti también?</span>
           </h1>
 
-          <p style={{fontSize:16,lineHeight:1.75,color:t.muted,margin:'0 0 36px',maxWidth:460}}>
+          <p style={{fontSize:17,lineHeight:1.7,color:t.muted,margin:'0 0 36px',maxWidth:440}}>
             Simulaciones reales de correos, SMS y archivos maliciosos. Entrena tu instinto, juega en grupo y descubre cómo funcionan los ataques.
           </p>
 
@@ -365,20 +358,13 @@ function Hero({ t, onStart, onHost }) {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Right column — 42%, lilac, card centered in visible area */}
-      <div className="hero-visual-col" style={{
-        flex:'0 0 42%',
-        background: rightBg,
-        clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',
-        display:'flex', flexDirection:'column',
-        alignItems:'center', justifyContent:'center',
-        padding:'80px 5% 80px 12%',
-      }}>
-        <HeroVisual t={t} />
+        {/* Hero visual — hidden on mobile */}
+        <div className="hero-visual-wrap" style={{flexShrink:0,display:'none'}}>
+          <HeroVisual t={t} />
+        </div>
+        <style>{`@media(min-width:900px){.hero-visual-wrap{display:block!important}}`}</style>
       </div>
-      <style>{`@media(max-width:899px){.hero-visual-col{display:none!important}}`}</style>
     </section>
   )
 }
