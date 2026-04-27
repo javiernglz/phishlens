@@ -1,8 +1,37 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase, supabaseReady } from '../lib/supabase'
 import { getOrCreatePlayerId } from '../lib/roomUtils'
 import { WordMark } from '../components/ui/PhishLensLogo'
+
+// ─── Timer ring ───────────────────────────────────────────────────────────────
+
+function TimerRing({ timeLeft, total }) {
+  if (!total || timeLeft === null) return null
+  const r    = 20
+  const circ = 2 * Math.PI * r
+  const pct  = total > 0 ? Math.max(0, timeLeft / total) : 0
+  const color = pct > 0.5 ? '#22c55e' : pct > 0.25 ? '#f59e0b' : '#ef4444'
+  return (
+    <div className="relative inline-flex items-center justify-center">
+      <svg width={52} height={52}>
+        <circle cx={26} cy={26} r={r} fill="none" stroke="#e2e8f0" strokeWidth={3.5} />
+        <circle
+          cx={26} cy={26} r={r}
+          fill="none" stroke={color} strokeWidth={3.5}
+          strokeDasharray={circ}
+          strokeDashoffset={circ * (1 - pct)}
+          strokeLinecap="round"
+          transform="rotate(-90 26 26)"
+          style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.5s' }}
+        />
+      </svg>
+      <span className="absolute text-xs font-black tabular-nums" style={{ color }}>
+        {timeLeft === 0 ? '✕' : timeLeft}
+      </span>
+    </div>
+  )
+}
 
 const LEVEL_STYLES = {
   easy:   { bg: 'bg-emerald-50',  text: 'text-emerald-700', border: 'border-emerald-300', label: 'Fácil'   },
@@ -57,13 +86,37 @@ export function PlayerRoom() {
   const [myVote, setMyVote]         = useState(null)
   const [phase, setPhase]           = useState('connecting')
   const [score, setScore]           = useState({ correct: 0, total: 0 })
+  const [timeLeft, setTimeLeft]     = useState(null)
 
   const channelRef     = useRef(null)
   const prevScenarioId = useRef(null)
   const prevGameState  = useRef(null)
   const myVoteRef      = useRef(null)
+  const timerRef       = useRef(null)
 
   useEffect(() => { myVoteRef.current = myVote }, [myVote])
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
+    setTimeLeft(null)
+  }, [])
+
+  function startSyncedTimer(duration, startedAt) {
+    stopTimer()
+    if (!duration) return
+    const elapsed  = startedAt ? Math.floor((Date.now() - startedAt) / 1000) : 0
+    const initial  = Math.max(0, duration - elapsed)
+    setTimeLeft(initial)
+    if (initial === 0) return
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === null || prev <= 1) { clearInterval(timerRef.current); timerRef.current = null; return 0 }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  useEffect(() => () => stopTimer(), [stopTimer])
 
   useEffect(() => {
     if (!supabase) return
@@ -93,7 +146,14 @@ export function PlayerRoom() {
 
         prevGameState.current = payload
         setGameState(payload)
-        setPhase(payload.phase ?? 'question')
+        const newPhase = payload.phase ?? 'question'
+        setPhase(newPhase)
+
+        if (newPhase === 'question' && payload.timerDuration) {
+          startSyncedTimer(payload.timerDuration, payload.timerStartedAt)
+        } else {
+          stopTimer()
+        }
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
@@ -180,8 +240,11 @@ export function PlayerRoom() {
   }
 
   // ── Question screen ─────────────────────────────────────────────────────────
-  const levelKey = gameState?.level ?? 'medium'
-  const lvl = LEVEL_STYLES[levelKey] ?? LEVEL_STYLES.medium
+  const levelKey   = gameState?.level ?? 'medium'
+  const lvl        = LEVEL_STYLES[levelKey] ?? LEVEL_STYLES.medium
+  const timerTotal = gameState?.timerDuration ?? null
+  const timesUp    = timerTotal !== null && timeLeft === 0
+  const canVote    = !voted && !timesUp
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col px-5 pt-10 pb-8">
@@ -193,6 +256,7 @@ export function PlayerRoom() {
               {score.correct}/{score.total}
             </span>
           )}
+          <TimerRing timeLeft={timeLeft} total={timerTotal} />
           <span className={`text-[11px] font-bold px-3 py-1 rounded-full border ${lvl.bg} ${lvl.text} ${lvl.border}`}>
             {lvl.label}
           </span>
@@ -224,17 +288,27 @@ export function PlayerRoom() {
             </p>
             <p className="text-slate-400 text-xs">Esperando al resto de jugadores…</p>
           </div>
+        ) : timesUp ? (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl border-2 border-slate-200 bg-slate-100">
+              ⏱️
+            </div>
+            <p className="text-slate-500 text-sm font-medium">Tiempo agotado</p>
+            <p className="text-slate-400 text-xs">Esperando la respuesta…</p>
+          </div>
         ) : (
           <div className="flex flex-col gap-4">
             <button
               onClick={() => sendVote('phishing')}
-              className="w-full py-5 rounded-2xl bg-white border-2 border-rose-200 hover:border-rose-400 hover:bg-rose-50 active:scale-95 transition-all text-rose-600 font-bold text-lg shadow-sm"
+              disabled={!canVote}
+              className="w-full py-5 rounded-2xl bg-white border-2 border-rose-200 hover:border-rose-400 hover:bg-rose-50 active:scale-95 transition-all text-rose-600 font-bold text-lg shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
             >
               🎣 Phishing
             </button>
             <button
               onClick={() => sendVote('legit')}
-              className="w-full py-5 rounded-2xl bg-white border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 active:scale-95 transition-all text-emerald-600 font-bold text-lg shadow-sm"
+              disabled={!canVote}
+              className="w-full py-5 rounded-2xl bg-white border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 active:scale-95 transition-all text-emerald-600 font-bold text-lg shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
             >
               ✓ Legítimo
             </button>
