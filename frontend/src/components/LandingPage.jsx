@@ -309,28 +309,28 @@ function Hero({ t, onStart, onHost }) {
       fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif",
       background: t.bg,
     }}>
-      {/* Left column — text */}
+      {/* Left column — fills 58%, text right-aligned towards the split */}
       <div style={{
-        flex:1, display:'flex', alignItems:'center',
-        padding:'60px 64px 60px 8%',
+        flex:'0 0 58%',
+        display:'flex', alignItems:'center', justifyContent:'flex-end',
+        padding:'60px 7% 60px 5%',
         position:'relative',
       }}>
-        {/* Subtle glow near the split */}
-        <div style={{position:'absolute',top:'40%',right:0,transform:'translateY(-50%)',width:500,height:400,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.18'):t.glow.replace('0.05','0.12')} 0%,transparent 70%)`,pointerEvents:'none'}}/>
+        <div style={{position:'absolute',top:'40%',right:'8%',transform:'translateY(-50%)',width:400,height:400,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.18'):t.glow.replace('0.05','0.12')} 0%,transparent 70%)`,pointerEvents:'none'}}/>
 
-        <div style={{maxWidth:520, width:'100%', position:'relative', zIndex:2}}>
+        <div style={{width:'100%', maxWidth:580, position:'relative', zIndex:2}}>
           {/* Badge */}
           <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
             <span style={{fontSize:11,fontWeight:700,color:t.accent,letterSpacing:'0.07em',textTransform:'uppercase'}}>Simulador de phishing · Gratuito</span>
           </div>
 
-          <h1 style={{fontSize:'clamp(2.6rem,4.5vw,4rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
+          <h1 style={{fontSize:'clamp(2.4rem,4vw,3.8rem)',fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',color:t.text,margin:'0 0 20px'}}>
             El phishing engaña<br/>a casi todos.
             <br/><span style={{color:t.accent}}>¿A ti también?</span>
           </h1>
 
-          <p style={{fontSize:17,lineHeight:1.7,color:t.muted,margin:'0 0 36px',maxWidth:440}}>
+          <p style={{fontSize:16,lineHeight:1.75,color:t.muted,margin:'0 0 36px',maxWidth:460}}>
             Simulaciones reales de correos, SMS y archivos maliciosos. Entrena tu instinto, juega en grupo y descubre cómo funcionan los ataques.
           </p>
 
@@ -367,14 +367,14 @@ function Hero({ t, onStart, onHost }) {
         </div>
       </div>
 
-      {/* Right column — lilac bg, card centered */}
+      {/* Right column — 42%, lilac, card centered in visible area */}
       <div className="hero-visual-col" style={{
-        flexShrink:0, width:'42%',
+        flex:'0 0 42%',
         background: rightBg,
         clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',
         display:'flex', flexDirection:'column',
         alignItems:'center', justifyContent:'center',
-        padding:'80px 48px',
+        padding:'80px 5% 80px 12%',
       }}>
         <HeroVisual t={t} />
       </div>
