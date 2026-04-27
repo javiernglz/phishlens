@@ -118,7 +118,7 @@ function Nav({ t, dark, onToggleDark }) {
       backdropFilter: scrolled ? 'blur(16px)' : 'none',
       borderBottom: scrolled ? `1px solid ${t.border}` : '1px solid transparent',
     }}>
-      <div style={{maxWidth:1140,margin:'0 auto',padding:'0 32px',height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+      <div style={{padding:'0 40px',height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <Logo t={t} size={20} />
         <div style={{display:'flex',alignItems:'center',gap:6}}>
           <button onClick={onToggleDark} style={{
@@ -191,7 +191,7 @@ function HeroVisual({ t }) {
   const showResult = step === 2
 
   return (
-    <div style={{width:400, flexShrink:0, position:'relative'}}>
+    <div style={{width:460, flexShrink:0, position:'relative'}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
       <div style={{
@@ -307,17 +307,17 @@ function Hero({ t, onStart, onHost }) {
     }}>
       {/* Glow */}
       <div style={{position:'absolute',top:'40%',left:'30%',transform:'translate(-50%,-50%)',width:700,height:500,borderRadius:'50%',background:`radial-gradient(ellipse,${t.isDark?t.glow.replace('0.07','0.22'):t.glow.replace('0.05','0.16')} 0%,transparent 65%)`,pointerEvents:'none'}}/>
-      {/* Split right accent */}
-      <div style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',background:t.isDark?'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)':'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)',clipPath:'polygon(7% 0%,100% 0%,100% 100%,0% 100%)',pointerEvents:'none'}}/>
+      {/* Split right accent — 60% */}
+      <div style={{position:'absolute',top:0,right:0,bottom:0,width:'60%',background:t.isDark?'linear-gradient(160deg,rgba(49,46,129,0.78) 0%,rgba(67,56,202,0.52) 100%)':'linear-gradient(160deg,#ede9fe 0%,#ddd6fe 100%)',clipPath:'polygon(5% 0%,100% 0%,100% 100%,0% 100%)',pointerEvents:'none'}}/>
 
-      {/* Card — absolutely covers same 42% as the lilac panel, centered within it */}
-      <div className="hero-card-abs" style={{position:'absolute',top:0,right:0,bottom:0,width:'42%',display:'none',alignItems:'center',justifyContent:'center',zIndex:3,paddingLeft:'4%'}}>
+      {/* Card — absolutely covers same 60% as the lilac panel, centered within it */}
+      <div className="hero-card-abs" style={{position:'absolute',top:0,right:0,bottom:0,width:'60%',display:'none',alignItems:'center',justifyContent:'center',zIndex:3,paddingLeft:'3%'}}>
         <HeroVisual t={t} />
       </div>
       <style>{`@media(min-width:900px){.hero-card-abs{display:flex!important}}`}</style>
 
-      {/* Text — constrained to left 58% */}
-      <div style={{width:'58%',boxSizing:'border-box',padding:'60px 48px 60px max(32px,6vw)',position:'relative',zIndex:2}}>
+      {/* Text — constrained to left 40% */}
+      <div style={{width:'40%',boxSizing:'border-box',padding:'60px 32px 60px max(24px,4vw)',position:'relative',zIndex:2}}>
         {/* Badge */}
         <div style={{display:'inline-flex',alignItems:'center',gap:7,background:t.dim,border:`1px solid ${t.line}`,borderRadius:6,padding:'5px 12px',marginBottom:28}}>
           <span style={{width:6,height:6,borderRadius:'50%',background:t.accent,display:'inline-block',animation:'pulse 2s ease-in-out infinite'}}/>
