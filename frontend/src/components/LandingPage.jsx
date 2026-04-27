@@ -119,7 +119,7 @@ function Nav({ t, dark, onToggleDark }) {
       borderBottom: scrolled ? `1px solid ${t.border}` : '1px solid transparent',
     }}>
       <div style={{padding:'0 40px',height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <Logo t={t} size={20} />
+        <a href="/" style={{textDecoration:'none'}}><Logo t={t} size={20} /></a>
         <div style={{display:'flex',alignItems:'center',gap:6}}>
           <button onClick={onToggleDark} style={{
             width:34,height:34,borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center',
@@ -399,7 +399,7 @@ function QRCodeMock() {
   )
 }
 
-function MultiplayerSection({ t }) {
+function MultiplayerSection({ t, onHost }) {
   const [ref, inView] = useInView()
   const [phaseKey, setPhaseKey] = useState(0)
   const [phase, setPhase] = useState(0)
@@ -461,7 +461,7 @@ function MultiplayerSection({ t }) {
                 </div>
               ))}
             </div>
-            <Btn t={t} variant="blue" onClick={() => {}} style={{fontSize:14,padding:'13px 26px'}}>Crear sala ahora →</Btn>
+            <Btn t={t} variant="blue" onClick={onHost} style={{fontSize:14,padding:'13px 26px'}}>Crear sala ahora →</Btn>
           </div>
 
           {/* Right: animated demo */}
@@ -801,7 +801,7 @@ export function LandingPage({ onStart, onHost, onDetect }) {
       <style>{GLOBAL_CSS}</style>
       <Nav t={t} dark={dark} onToggleDark={() => setDark(d => !d)} />
       <Hero t={t} onStart={onStart} onHost={onHost} />
-      <MultiplayerSection t={t} />
+      <MultiplayerSection t={t} onHost={onHost} />
       <DetectorSection t={t} onDetect={onDetect} />
       <HowItWorks t={t} />
       <CTASection t={t} onStart={onStart} onHost={onHost} />
