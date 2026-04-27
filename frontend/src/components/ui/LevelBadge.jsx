@@ -1,7 +1,7 @@
 const CONFIG = {
-  easy:   { label: 'Fácil',   classes: 'bg-emerald-950 border-emerald-700 text-emerald-400' },
-  medium: { label: 'Medio',   classes: 'bg-orange-950  border-orange-700  text-orange-400'  },
-  hard:   { label: 'Difícil', classes: 'bg-rose-950    border-rose-700    text-rose-400'    },
+  easy:   { label: 'Fácil',   classes: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
+  medium: { label: 'Medio',   classes: 'bg-amber-50   border-amber-300   text-amber-700'   },
+  hard:   { label: 'Difícil', classes: 'bg-rose-50    border-rose-300    text-rose-700'    },
 }
 
 export function LevelBadge({ level }) {
