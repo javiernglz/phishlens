@@ -265,7 +265,7 @@ function LobbyScreen({ code, joinUrl, players, onStart, copied, onCopy, levelOpt
           onClick={onStart}
           disabled={finalCount===0}
           className={`flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-base transition-all ${
-            scenarioCount>0
+            finalCount>0
               ? 'bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-lg shadow-indigo-200'
               : 'bg-slate-100 text-slate-400 cursor-not-allowed'
           }`}
