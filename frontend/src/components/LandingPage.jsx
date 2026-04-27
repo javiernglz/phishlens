@@ -383,99 +383,6 @@ function Hero({ t, onStart, onHost }) {
   )
 }
 
-// ── Features ─────────────────────────────────────────────────────────────────
-
-function Features({ t }) {
-  const [ref, inView] = useInView()
-
-  const INDIGO = 'linear-gradient(145deg,#4338ca 0%,#6d28d9 100%)'
-  const YELLOW = 'linear-gradient(145deg,#fde68a 0%,#fef9c3 100%)'
-
-  const feats = [
-    {
-      n:'01', grad:INDIGO, light:false,
-      icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2.5"/>
-          <path d="M8 21h8M12 17v4"/>
-          <rect x="5.5" y="6.5" width="6" height="4.5" rx="1" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.5)" strokeWidth="1"/>
-        </svg>
-      ),
-      title:'Interfaces\n100% reales',
-      desc:'Gmail, iMessage, WhatsApp — cada escenario replica la app original sin pistas artificiales.',
-    },
-    {
-      n:'02', grad:YELLOW, light:true,
-      icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(120,53,15,0.75)" strokeWidth="1.6" strokeLinecap="round">
-          <circle cx="11" cy="11" r="7"/>
-          <path d="m21 21-4.35-4.35"/>
-          <line x1="11" y1="8" x2="11" y2="14" strokeWidth="2"/>
-          <line x1="8" y1="11" x2="14" y2="11" strokeWidth="2"/>
-        </svg>
-      ),
-      title:'X-Ray revela\nla trampa',
-      desc:'El escáner ilumina cada indicador de ataque con una explicación técnica precisa y accesible.',
-    },
-    {
-      n:'03', grad:INDIGO, light:false,
-      icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round">
-          <circle cx="8" cy="7" r="4"/>
-          <path d="M4 21v-2a4 4 0 0 1 4-4h4"/>
-          <circle cx="18" cy="17" r="4"/>
-          <path d="M18 14v3M18 20h.01" strokeWidth="2"/>
-        </svg>
-      ),
-      title:'Multijugador\nen tiempo real',
-      desc:'Crea una sala y tu equipo vota desde el móvil. Votos en vivo, marcador y X-Ray compartido.',
-    },
-    {
-      n:'04', grad:YELLOW, light:true,
-      icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(120,53,15,0.75)" strokeWidth="1.6" strokeLinecap="round">
-          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0v-15A2.5 2.5 0 0 1 9.5 2z"/>
-          <path d="M14.5 8A2.5 2.5 0 0 1 17 10.5v9a2.5 2.5 0 0 1-5 0v-9A2.5 2.5 0 0 1 14.5 8z"/>
-          <path d="M4 18h2M18 18h2"/>
-        </svg>
-      ),
-      title:'Detector\nde Phishing IA',
-      desc:'Sube cualquier captura o pega el texto. La IA detecta los vectores de ataque en segundos.',
-    },
-  ]
-
-  return (
-    <section style={{background:t.isDark?t.bg:t.bgAlt,borderTop:`1px solid ${t.border}`,fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif"}}>
-      <div ref={ref} style={{maxWidth:1140,margin:'0 auto',padding:'88px 32px'}}>
-        <div className={`fade-up${inView?' in':''}`} style={{marginBottom:48}}>
-          <div style={{fontSize:12,fontWeight:700,color:t.accent,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:12}}>Qué incluye</div>
-          <h2 style={{fontSize:'clamp(1.8rem,3vw,2.4rem)',fontWeight:800,letterSpacing:'-0.03em',color:t.text,margin:0}}>
-            Todo lo que necesitas para<br/>entrenar a tu equipo
-          </h2>
-        </div>
-        <style>{`@media(max-width:860px){.feat-grid{grid-template-columns:repeat(2,1fr)!important}}`}</style>
-        <div className="feat-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
-          {feats.map(({n,grad,light,icon,title,desc},i) => (
-            <div key={n} className={`card-hover fade-up${inView?' in':''}`}
-              style={{borderRadius:18,overflow:'hidden',background:grad,transitionDelay:`${i*70}ms`,
-                boxShadow: light ? '0 16px 48px rgba(0,0,0,0.10)' : '0 16px 48px rgba(0,0,0,0.28)'}}>
-              <div style={{padding:'26px 22px 24px'}}>
-                <div style={{fontSize:44,fontWeight:900,lineHeight:1,letterSpacing:'-0.05em',marginBottom:18,
-                  color: light ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.07)'}}>{n}</div>
-                <div style={{marginBottom:14}}>{icon}</div>
-                <h3 style={{fontSize:16,fontWeight:800,margin:'0 0 10px',letterSpacing:'-0.02em',lineHeight:1.2,whiteSpace:'pre-line',
-                  color: light ? '#1c1917' : '#fff'}}>{title}</h3>
-                <p style={{fontSize:13,lineHeight:1.65,margin:0,
-                  color: light ? 'rgba(28,25,23,0.62)' : 'rgba(255,255,255,0.68)'}}>{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Multiplayer Section ───────────────────────────────────────────────────────
 
 const MOCK_PLAYERS = ['Ana R.','Carlos M.','Laura P.','Javier G.','María S.','Pedro L.','Sofía T.','David C.']
@@ -914,7 +821,6 @@ export function LandingPage({ onStart, onHost, onDetect }) {
       <style>{GLOBAL_CSS}</style>
       <Nav t={t} dark={dark} onToggleDark={() => setDark(d => !d)} />
       <Hero t={t} onStart={onStart} onHost={onHost} />
-      <Features t={t} />
       <MultiplayerSection t={t} />
       <DetectorSection t={t} onDetect={onDetect} />
       <HowItWorks t={t} />
