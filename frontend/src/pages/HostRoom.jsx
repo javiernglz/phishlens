@@ -3,26 +3,32 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { supabase } from '../lib/supabase'
 import { ALL_SCENARIOS } from '../data'
-import { HookIcon } from '../components/ui/PhishLensLogo'
+import { WordMark } from '../components/ui/PhishLensLogo'
 import { ChevronRight, ChevronLeft, Eye, EyeOff, Users, Copy, Check, Trophy } from 'lucide-react'
 
 const MODULE_LABEL = { email: 'Email', sms: 'SMS / WA', file: 'Archivo' }
+
+const LEVEL_STYLES = {
+  easy:   { text: 'text-emerald-600', label: 'Fácil'   },
+  medium: { text: 'text-amber-600',   label: 'Medio'   },
+  hard:   { text: 'text-rose-600',    label: 'Difícil' },
+}
 
 function VoteBar({ label, count, total, color }) {
   const pct = total === 0 ? 0 : Math.round((count / total) * 100)
   return (
     <div className="flex items-center gap-3">
       <span className={`w-24 text-right text-xs font-bold ${color}`}>{label}</span>
-      <div className="flex-1 h-8 bg-slate-800 rounded-full overflow-hidden">
+      <div className="flex-1 h-7 bg-slate-100 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
-            color === 'text-red-400' ? 'bg-red-700' : 'bg-emerald-700'
+            color === 'text-rose-600' ? 'bg-rose-400' : 'bg-emerald-400'
           }`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="w-12 text-sm font-bold text-slate-200">
-        {count} <span className="text-slate-500 font-normal text-xs">({pct}%)</span>
+      <span className="w-12 text-sm font-bold text-slate-700">
+        {count} <span className="text-slate-400 font-normal text-xs">({pct}%)</span>
       </span>
     </div>
   )
@@ -32,10 +38,10 @@ function PlayerPill({ name, voted }) {
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
       voted
-        ? 'bg-cyan-950 border-cyan-700 text-cyan-300'
-        : 'bg-slate-800 border-slate-700 text-slate-500'
+        ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+        : 'bg-slate-100 border-slate-200 text-slate-400'
     }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${voted ? 'bg-cyan-400' : 'bg-slate-600'}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${voted ? 'bg-indigo-500' : 'bg-slate-300'}`} />
       {name}
     </span>
   )
@@ -59,16 +65,16 @@ function Scoreboard({ scores, total, onClose }) {
     .sort((a, b) => b.correct - a.correct || a.name.localeCompare(b.name))
 
   return (
-    <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-      <div className="bg-[#0d1117] border border-slate-800 rounded-3xl p-8 w-full max-w-lg shadow-2xl">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 w-full max-w-lg shadow-2xl">
         <div className="flex items-center gap-3 mb-8">
-          <Trophy size={24} className="text-amber-400" />
-          <h2 className="text-2xl font-black text-slate-100">Marcador final</h2>
-          <span className="ml-auto text-xs text-slate-500">{total} preguntas</span>
+          <Trophy size={24} className="text-amber-500" />
+          <h2 className="text-2xl font-black text-slate-900">Marcador final</h2>
+          <span className="ml-auto text-xs text-slate-400">{total} preguntas</span>
         </div>
 
         {ranked.length === 0 ? (
-          <p className="text-slate-500 text-sm text-center py-8">Sin jugadores registrados</p>
+          <p className="text-slate-400 text-sm text-center py-8">Sin jugadores registrados</p>
         ) : (
           <div className="flex flex-col gap-3 mb-8">
             {ranked.map((p, i) => {
@@ -78,23 +84,23 @@ function Scoreboard({ scores, total, onClose }) {
                 <div
                   key={p.playerId}
                   className={`flex items-center gap-4 rounded-2xl px-5 py-3.5 border ${
-                    i === 0 ? 'bg-amber-950/40 border-amber-800/60'
-                    : i === 1 ? 'bg-slate-800/60 border-slate-700'
-                    : i === 2 ? 'bg-orange-950/30 border-orange-900/50'
-                    : 'bg-slate-900/40 border-slate-800'
+                    i === 0 ? 'bg-amber-50 border-amber-200'
+                    : i === 1 ? 'bg-slate-100 border-slate-200'
+                    : i === 2 ? 'bg-orange-50 border-orange-200'
+                    : 'bg-slate-50 border-slate-100'
                   }`}
                 >
                   <span className="text-xl w-7 text-center flex-shrink-0">
-                    {isTop ? MEDAL[i] : <span className="text-slate-600 text-sm font-bold">{i + 1}</span>}
+                    {isTop ? MEDAL[i] : <span className="text-slate-400 text-sm font-bold">{i + 1}</span>}
                   </span>
-                  <span className="flex-1 font-semibold text-slate-200 truncate">{p.name}</span>
+                  <span className="flex-1 font-semibold text-slate-800 truncate">{p.name}</span>
                   <div className="text-right flex-shrink-0">
                     <span className={`text-lg font-black ${
-                      pct >= 80 ? 'text-emerald-400'
-                      : pct >= 50 ? 'text-amber-400'
-                      : 'text-red-400'
-                    }`}>{p.correct}<span className="text-slate-600 font-normal text-sm">/{total}</span></span>
-                    <div className="text-[10px] text-slate-500">{pct}% acierto</div>
+                      pct >= 80 ? 'text-emerald-600'
+                      : pct >= 50 ? 'text-amber-600'
+                      : 'text-rose-600'
+                    }`}>{p.correct}<span className="text-slate-300 font-normal text-sm">/{total}</span></span>
+                    <div className="text-[10px] text-slate-400">{pct}% acierto</div>
                   </div>
                 </div>
               )
@@ -104,7 +110,7 @@ function Scoreboard({ scores, total, onClose }) {
 
         <button
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition-colors"
+          className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors"
         >
           Cerrar
         </button>
@@ -117,14 +123,13 @@ export function HostRoom() {
   const { code }   = useParams()
   const navigate   = useNavigate()
 
-  const [players, setPlayers]             = useState({})
-  const [votes, setVotes]                 = useState({})
-  const [phase, setPhase]                 = useState('question')
-  const [scenarioIndex, setScenarioIndex] = useState(0)
-  const [copied, setCopied]               = useState(false)
+  const [players, setPlayers]               = useState({})
+  const [votes, setVotes]                   = useState({})
+  const [phase, setPhase]                   = useState('question')
+  const [scenarioIndex, setScenarioIndex]   = useState(0)
+  const [copied, setCopied]                 = useState(false)
   const [showScoreboard, setShowScoreboard] = useState(false)
-  // scores: { [playerId]: { name, correct, answered } }
-  const [scores, setScores]               = useState({})
+  const [scores, setScores]                 = useState({})
 
   const channelRef  = useRef(null)
   const SCENARIOS   = ALL_SCENARIOS
@@ -148,7 +153,6 @@ export function HostRoom() {
     })
   }
 
-  // Accumulate scores from current votes before moving on
   function accumulateScores(currentVotes, currentScenario) {
     const correct = currentScenario?.isPhishing !== false ? 'phishing' : 'legit'
     setScores((prev) => {
@@ -245,7 +249,6 @@ export function HostRoom() {
   }
 
   function openScoreboard() {
-    // Include current question's votes in the scoreboard
     accumulateScores(votesRef.current, scenario)
     setShowScoreboard(true)
   }
@@ -266,14 +269,16 @@ export function HostRoom() {
 
   if (!scenario) {
     return (
-      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
-        <p className="text-slate-500">No hay más escenarios</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <p className="text-slate-400">No hay más escenarios</p>
       </div>
     )
   }
 
+  const levelStyle = LEVEL_STYLES[scenario.level] ?? LEVEL_STYLES.medium
+
   return (
-    <div className="min-h-screen bg-[#0d1117] flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       {showScoreboard && (
         <Scoreboard
           scores={scores}
@@ -283,32 +288,31 @@ export function HostRoom() {
       )}
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-slate-800">
+      <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-slate-200">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:opacity-70 transition-opacity">
-          <HookIcon size={20} color="#22d3ee" strokeWidth={2.2} />
-          <span className="text-sm font-bold text-slate-200">PhishLens</span>
+          <WordMark size={16} dark={false} />
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">Código de sala:</span>
+          <span className="text-xs text-slate-400">Código de sala:</span>
           <button
             onClick={copyCode}
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-3 py-1.5 text-cyan-300 font-mono font-bold text-sm transition-colors"
+            className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-3 py-1.5 text-indigo-600 font-mono font-bold text-sm transition-colors"
           >
             {code}
-            {copied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} className="text-slate-500" />}
+            {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} className="text-indigo-400" />}
           </button>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={openScoreboard}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 hover:border-amber-700 text-slate-400 hover:text-amber-400 text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-slate-500 hover:text-amber-700 text-xs font-semibold transition-colors"
           >
             <Trophy size={13} />
             Marcador
           </button>
-          <div className="flex items-center gap-1.5 text-slate-400 text-sm">
+          <div className="flex items-center gap-1.5 text-slate-500 text-sm">
             <Users size={14} />
             <span>{totalVoters} jugador{totalVoters !== 1 ? 'es' : ''}</span>
           </div>
@@ -321,19 +325,17 @@ export function HostRoom() {
           {/* Scenario info */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 {MODULE_LABEL[scenario.module]}
               </span>
-              <span className="text-slate-700">·</span>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${
-                scenario.level === 'Fácil' ? 'text-emerald-500'
-                : scenario.level === 'Medio' ? 'text-amber-500'
-                : 'text-red-500'
-              }`}>{scenario.level}</span>
-              <span className="text-slate-700">·</span>
-              <span className="text-[10px] text-slate-600">{scenarioIndex + 1} / {SCENARIOS.length}</span>
+              <span className="text-slate-300">·</span>
+              <span className={`text-[10px] font-bold uppercase tracking-widest ${levelStyle.text}`}>
+                {levelStyle.label}
+              </span>
+              <span className="text-slate-300">·</span>
+              <span className="text-[10px] text-slate-400">{scenarioIndex + 1} / {SCENARIOS.length}</span>
             </div>
-            <h1 className="text-3xl font-bold text-slate-100 leading-snug">
+            <h1 className="text-3xl font-bold text-slate-900 leading-snug">
               {scenario.content?.subject
                 ?? scenario.content?.from
                 ?? scenario.content?.filename
@@ -342,26 +344,26 @@ export function HostRoom() {
           </div>
 
           {/* Vote bars */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-5 shadow-sm">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-slate-500 uppercase tracking-widest font-semibold">Votos en tiempo real</span>
-              <span className="text-xs text-slate-500">{votedCnt}/{totalVoters} han votado</span>
+              <span className="text-xs text-slate-400 uppercase tracking-widest font-semibold">Votos en tiempo real</span>
+              <span className="text-xs text-slate-400">{votedCnt}/{totalVoters} han votado</span>
             </div>
-            <VoteBar label="🎣 Phishing" count={phishingCnt} total={Math.max(totalVoters, 1)} color="text-red-400" />
-            <VoteBar label="✓ Legítimo"  count={legitCnt}    total={Math.max(totalVoters, 1)} color="text-emerald-400" />
+            <VoteBar label="🎣 Phishing" count={phishingCnt} total={Math.max(totalVoters, 1)} color="text-rose-600" />
+            <VoteBar label="✓ Legítimo"  count={legitCnt}    total={Math.max(totalVoters, 1)} color="text-emerald-600" />
           </div>
 
           {/* Answer reveal */}
           {phase === 'reveal' && (
             <div className={`rounded-2xl border p-5 flex items-center gap-4 ${
-              isPhishing ? 'bg-red-950/40 border-red-800' : 'bg-emerald-950/40 border-emerald-800'
+              isPhishing ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'
             }`}>
               <span className="text-4xl">{isPhishing ? '🎣' : '✅'}</span>
               <div>
-                <p className={`text-lg font-bold ${isPhishing ? 'text-red-300' : 'text-emerald-300'}`}>
+                <p className={`text-lg font-bold ${isPhishing ? 'text-rose-700' : 'text-emerald-700'}`}>
                   Era {isPhishing ? 'Phishing' : 'Legítimo'}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${isPhishing ? 'text-rose-500' : 'text-emerald-600'}`}>
                   {isPhishing
                     ? `${phishingCnt} lo detectaron · ${legitCnt} cayeron en la trampa`
                     : `${legitCnt} lo identificaron · ${phishingCnt} votaron erróneamente phishing`}
@@ -375,7 +377,7 @@ export function HostRoom() {
             <button
               onClick={goPrev}
               disabled={scenarioIndex === 0}
-              className="p-2.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors bg-white"
             >
               <ChevronLeft size={18} />
             </button>
@@ -383,8 +385,8 @@ export function HostRoom() {
               onClick={toggleReveal}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border font-semibold text-sm transition-all ${
                 phase === 'reveal'
-                  ? 'bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700'
-                  : 'bg-cyan-500 border-cyan-400 text-slate-950 hover:bg-cyan-400'
+                  ? 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200'
+                  : 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
               }`}
             >
               {phase === 'reveal' ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -393,7 +395,7 @@ export function HostRoom() {
             {isLast ? (
               <button
                 onClick={openScoreboard}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-amber-700 hover:border-amber-500 bg-amber-950/40 hover:bg-amber-950/70 text-amber-300 font-semibold text-sm transition-colors"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-amber-300 bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold text-sm transition-colors"
               >
                 <Trophy size={15} />
                 Ver marcador
@@ -401,7 +403,7 @@ export function HostRoom() {
             ) : (
               <button
                 onClick={goNext}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-slate-100 font-semibold text-sm transition-colors"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-semibold text-sm transition-colors"
               >
                 Siguiente <ChevronRight size={15} />
               </button>
@@ -410,24 +412,25 @@ export function HostRoom() {
         </div>
 
         {/* Right sidebar */}
-        <div className="w-64 border-l border-slate-800 flex flex-col overflow-y-auto">
+        <div className="w-64 border-l border-slate-200 bg-white flex flex-col overflow-y-auto">
           {/* QR section */}
-          <div className="p-5 border-b border-slate-800/60">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Únete desde el móvil</p>
+          <div className="p-5 border-b border-slate-100">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Únete desde el móvil</p>
             <div className="flex justify-center">
-              <div className="bg-white p-3 rounded-2xl">
+              <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
                 <QRCodeSVG value={joinUrl} size={148} level="M" />
               </div>
             </div>
-            <p className="text-center text-[10px] text-slate-600 mt-3 font-mono">{joinUrl}</p>
+            <p className="text-center text-[10px] text-slate-400 mt-3 font-mono">{joinUrl}</p>
           </div>
 
           {/* Players section */}
           <div className="p-5 flex flex-col gap-3 flex-1">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Jugadores</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Jugadores</p>
             {playerList.length === 0 ? (
-              <p className="text-xs text-slate-700 leading-relaxed">
-                Escanea el QR o entra con el código <span className="text-cyan-600 font-mono">{code}</span>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Escanea el QR o entra con el código{' '}
+                <span className="text-indigo-600 font-mono font-bold">{code}</span>
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">

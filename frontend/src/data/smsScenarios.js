@@ -269,6 +269,136 @@ export const smsScenarios = [
     ],
   },
 
+  // ─── MEDIUM (nuevos) ──────────────────────────────────────────────────────
+
+  {
+    id: 'sms-medium-002',
+    module: 'sms',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Paquete DHL en Aduana',
+    description: 'Smishing de mensajería con cobro de aduana ficticio de 2,99 €',
+    content: {
+      platform: 'sms',
+      sender: 'DHL',
+      senderName: 'DHL',
+      messages: [
+        {
+          from: 'them',
+          text: 'DHL: Su envío 7392847651 no pudo ser entregado. Se le cobrarán gastos de aduana de 2,99€. Realice el pago para liberar su paquete:',
+          time: '14:23',
+        },
+        {
+          from: 'them',
+          type: 'link',
+          text: 'dhl-aduanas.es/liberar-envio',
+          time: '14:23',
+        },
+        {
+          from: 'them',
+          text: 'El envío será devuelto al remitente en 48 h si no completa el pago.',
+          time: '14:24',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Remitente DHL Suplantado',
+        severity: 'warning',
+        explanation: 'El nombre "DHL" puede falsificarse mediante SMS spoofing. DHL España envía notificaciones siempre desde "DHL" o "DHL Express" y solo incluye números de seguimiento reales de 10 dígitos. Un banco o mensajería real nunca te pedirá un pago de aduana a través de un SMS con enlace.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Cobro de Aduana Falso + Dominio Fraudulento',
+        severity: 'danger',
+        explanation: 'DHL nunca solicita pagos de aduanas mediante SMS con enlace. El dominio oficial es dhl.com — "dhl-aduanas.es" es un dominio fraudulento. Esta táctica del "pequeño pago de aduana" (1,99–3,99 €) es la más utilizada en smishing de mensajería porque parece razonable y baja la guardia.',
+      },
+    ],
+  },
+
+  {
+    id: 'sms-legit-medium-002',
+    module: 'sms',
+    isPhishing: false,
+    level: 'medium',
+    title: 'Seguimiento Correos Real',
+    description: 'Notificación auténtica de Correos con número de seguimiento RR...ES y dominio oficial',
+    content: {
+      platform: 'sms',
+      sender: 'Correos',
+      senderName: 'Correos',
+      messages: [
+        {
+          from: 'them',
+          text: 'Correos: Su envío RR387654219ES está en reparto hoy y será entregado antes de las 20:00 h. Consulte el estado en:',
+          time: '08:32',
+        },
+        {
+          from: 'them',
+          type: 'link',
+          text: 'correos.es/localizador?codigo=RR387654219ES',
+          time: '08:32',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Remitente Oficial de Correos',
+        severity: 'safe',
+        explanation: 'Correos usa el remitente alfanumérico "Correos". El mismo nombre que usan los atacantes — por eso es crucial analizar el resto del mensaje. Aquí no hay solicitud de pago, no hay urgencia y el enlace lleva a correos.es.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Dominio Oficial + Formato de Código Correcto',
+        severity: 'safe',
+        explanation: '"correos.es" es el dominio oficial. El código "RR387654219ES" tiene el formato auténtico de Correos: 2 letras + 9 dígitos + ES. Compáralo con el smishing anterior: "ES928471623" — ese formato no existe en Correos. Aquí tampoco hay cobro de gestión.',
+      },
+    ],
+  },
+
+  {
+    id: 'sms-medium-003',
+    module: 'sms',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Cuenta Bizum Suspendida',
+    description: 'Smishing suplantando a Bizum — remitente que no debería existir',
+    content: {
+      platform: 'sms',
+      sender: 'Bizum',
+      senderName: 'Bizum',
+      messages: [
+        {
+          from: 'them',
+          text: 'Bizum: Su cuenta ha sido suspendida temporalmente por motivos de seguridad. Reactívela en las próximas 24 h o su acceso será cancelado definitivamente:',
+          time: '17:44',
+        },
+        {
+          from: 'them',
+          type: 'link',
+          text: 'bizum-verificacion.es/reactivar',
+          time: '17:44',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Bizum No Envía SMS Propios',
+        severity: 'danger',
+        explanation: 'Bizum no dispone de un sistema de notificaciones SMS independiente. Los avisos de pagos Bizum llegan siempre desde el SMS de tu banco (BBVA, Santander, CaixaBank…). Un remitente "Bizum" autónomo no existe en el sistema oficial — cualquier SMS con ese remitente es un fraude.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Dominio Falso + Amenaza de Cancelación',
+        severity: 'danger',
+        explanation: 'El dominio oficial de Bizum es bizum.es. "bizum-verificacion.es" es un dominio fraudulento. La amenaza de "cancelación definitiva en 24 h" es manipulación emocional para que actúes sin pensar. Ningún servicio financiero cancela tu cuenta por no hacer clic en un SMS.',
+      },
+    ],
+  },
+
   // ─── HARD: phishing → phishing → legít ───────────────────────────────────
 
   {
@@ -402,6 +532,117 @@ export const smsScenarios = [
         label: 'Dominio Falso + Recolección Bancaria',
         severity: 'danger',
         explanation: 'El dominio real de la Agencia Tributaria es "sede.agenciatributaria.gob.es". "agencia-tributaria.devoluciones-irpf.com" imita el nombre oficial pero es un dominio .com fraudulento. La campaña coincide con la época de la Renta — los atacantes sincronizan estos SMS con fechas reales para que el importe y el contexto parezcan creíbles.',
+      },
+    ],
+  },
+
+  {
+    id: 'wa-hard-002',
+    module: 'sms',
+    isPhishing: true,
+    level: 'hard',
+    title: 'Acceso Sospechoso Amazon (WA)',
+    description: 'Alerta de seguridad falsa de Amazon por WhatsApp con preview de enlace convincente',
+    content: {
+      platform: 'whatsapp',
+      sender: 'Amazon',
+      senderName: 'Amazon',
+      messages: [
+        {
+          from: 'them',
+          text: 'Amazon: Hemos detectado un acceso a tu cuenta desde un nuevo dispositivo.\n\nDispositivo: Windows PC · Chrome\nUbicación: Bucarest, Rumanía\nFecha: 26/04/2026 · 02:14 CET',
+          time: '07:30',
+        },
+        {
+          from: 'them',
+          text: 'Si no fuiste tú, verifica y protege tu cuenta de inmediato para evitar cargos no autorizados en tus métodos de pago guardados:',
+          time: '07:30',
+        },
+        {
+          from: 'them',
+          type: 'link',
+          text: 'amazon-es-seguridad.com/verificar-acceso',
+          time: '07:31',
+          preview: {
+            url: 'amazon-es-seguridad.com',
+            title: 'Amazon — Centro de Seguridad',
+            description: 'Verifica tu identidad y protege tu cuenta de Amazon España',
+            headerBg: '#FF9900',
+            brandText: 'amazon.es',
+          },
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Amazon No Usa WhatsApp para Alertas de Seguridad',
+        severity: 'warning',
+        explanation: 'Amazon no envía alertas de seguridad por WhatsApp. Sus notificaciones llegan por email o por la app oficial de Amazon. Cualquier mensaje de "Amazon" por WhatsApp — sin importar cuánto se parezca — debe ponerte en alerta inmediata.',
+      },
+      {
+        targetId: 'hs-link',
+        label: 'Preview Falsa + Dominio Fraudulento',
+        severity: 'danger',
+        explanation: '"amazon-es-seguridad.com" no es amazon.es. La preview muestra "amazon.es" como URL visible, pero el enlace real va a un dominio diferente que el atacante controla. WhatsApp genera la preview del dominio destino — los atacantes configuran metaetiquetas en su web falsa para que parezca Amazon. Comprueba siempre el dominio real al pulsar el enlace.',
+      },
+    ],
+  },
+
+  {
+    id: 'sms-legit-hard-002',
+    module: 'sms',
+    isPhishing: false,
+    level: 'hard',
+    title: 'Código OTP CaixaBank',
+    description: 'SMS de autorización de compra real — código sin enlace ni solicitud de datos',
+    content: {
+      platform: 'sms',
+      sender: 'CaixaBank',
+      senderName: 'CaixaBank',
+      messages: [
+        {
+          from: 'them',
+          text: 'CaixaBank: Código de autorización: 847291. Compra de 89,99€ en FNAC.ES. Válido 10 min. Nunca lo compartas con nadie. Si no lo has solicitado, llama al 900 40 40 90.',
+          time: '13:17',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'OTP Legítimo — Sin Enlace',
+        severity: 'safe',
+        explanation: 'Un SMS OTP real solo contiene el código, el importe, el comercio y un teléfono al que llamar. Nunca incluye un enlace para "validar" ni te pide que introduzcas nada en ningún sitio. Si alguien te llama haciéndose pasar por CaixaBank y te pide que le leas este código, es un ataque de vishing — cuelga y llama tú al 900 40 40 90.',
+      },
+    ],
+  },
+
+  {
+    id: 'sms-legit-hard-003',
+    module: 'sms',
+    isPhishing: false,
+    level: 'hard',
+    title: 'Código de Acceso Santander',
+    description: 'OTP de inicio de sesión real — mismo remitente que el smishing de Santander',
+    content: {
+      platform: 'sms',
+      sender: 'SANTANDER',
+      senderName: 'Santander',
+      messages: [
+        {
+          from: 'them',
+          text: 'Santander: Código de acceso: 492731. No lo compartas con nadie. Si no lo has solicitado, llama al 91 512 33 36.',
+          time: '10:03',
+        },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-sender',
+        label: 'Mismo Remitente, Mensaje Completamente Distinto',
+        severity: 'safe',
+        explanation: 'El remitente "SANTANDER" es idéntico al que usan los atacantes — puede incluso aparecer en el mismo hilo de conversación que SMS fraudulentos. La diferencia está en el contenido: este SMS te da un código que tú has pedido, da un teléfono oficial y no contiene ningún enlace de acción. Un banco real nunca te pide el código que te acaba de enviar.',
       },
     ],
   },

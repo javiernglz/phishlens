@@ -74,7 +74,7 @@ function Btn({ children, onClick, variant = 'primary', t, style = {} }) {
   const styles = {
     primary: { background: hov ? t.accentHov : t.accent, color: t.isDark ? '#07111f' : '#fff' },
     ghost:   { background: hov ? t.bgCardHov : t.bgCard, color: t.text, border:`1px solid ${t.border}` },
-    blue:    { background: hov ? '#ea580c' : '#f97316', color:'#fff' },
+    blue:    { background: hov ? '#fcd34d' : '#fde68a', color:'#78350f' },
   }
   return (
     <button onClick={onClick} style={{...base,...styles[variant]}}
@@ -191,7 +191,7 @@ function HeroVisual({ t }) {
   const showResult = step === 2
 
   return (
-    <div style={{width:430, flexShrink:0, position:'relative'}}>
+    <div style={{width:430, flexShrink:0, position:'relative', paddingLeft:36}}>
       <div style={{position:'absolute',inset:'-60px',background:`radial-gradient(ellipse 70% 60% at 50% 40%, ${t.accentGlow} 0%, transparent 70%)`,pointerEvents:'none'}}/>
 
       <div style={{display:'flex',justifyContent:'center',marginBottom:14}}>
@@ -388,9 +388,12 @@ function Hero({ t, onStart, onHost }) {
 function Features({ t }) {
   const [ref, inView] = useInView()
 
+  const INDIGO = 'linear-gradient(145deg,#4338ca 0%,#6d28d9 100%)'
+  const YELLOW = 'linear-gradient(145deg,#fde68a 0%,#fef9c3 100%)'
+
   const feats = [
     {
-      n:'01', grad:'linear-gradient(145deg,#4338ca 0%,#6d28d9 100%)',
+      n:'01', grad:INDIGO, light:false,
       icon:(
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2.5"/>
@@ -402,9 +405,9 @@ function Features({ t }) {
       desc:'Gmail, iMessage, WhatsApp — cada escenario replica la app original sin pistas artificiales.',
     },
     {
-      n:'02', grad:'linear-gradient(145deg,#b91c1c 0%,#7f1d1d 100%)',
+      n:'02', grad:YELLOW, light:true,
       icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(120,53,15,0.75)" strokeWidth="1.6" strokeLinecap="round">
           <circle cx="11" cy="11" r="7"/>
           <path d="m21 21-4.35-4.35"/>
           <line x1="11" y1="8" x2="11" y2="14" strokeWidth="2"/>
@@ -415,7 +418,7 @@ function Features({ t }) {
       desc:'El escáner ilumina cada indicador de ataque con una explicación técnica precisa y accesible.',
     },
     {
-      n:'03', grad:'linear-gradient(145deg,#1d4ed8 0%,#0e7490 100%)',
+      n:'03', grad:INDIGO, light:false,
       icon:(
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round">
           <circle cx="8" cy="7" r="4"/>
@@ -428,9 +431,9 @@ function Features({ t }) {
       desc:'Crea una sala y tu equipo vota desde el móvil. Votos en vivo, marcador y X-Ray compartido.',
     },
     {
-      n:'04', grad:'linear-gradient(145deg,#065f46 0%,#0e7490 100%)',
+      n:'04', grad:YELLOW, light:true,
       icon:(
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(120,53,15,0.75)" strokeWidth="1.6" strokeLinecap="round">
           <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0v-15A2.5 2.5 0 0 1 9.5 2z"/>
           <path d="M14.5 8A2.5 2.5 0 0 1 17 10.5v9a2.5 2.5 0 0 1-5 0v-9A2.5 2.5 0 0 1 14.5 8z"/>
           <path d="M4 18h2M18 18h2"/>
@@ -452,14 +455,18 @@ function Features({ t }) {
         </div>
         <style>{`@media(max-width:860px){.feat-grid{grid-template-columns:repeat(2,1fr)!important}}`}</style>
         <div className="feat-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
-          {feats.map(({n,grad,icon,title,desc},i) => (
+          {feats.map(({n,grad,light,icon,title,desc},i) => (
             <div key={n} className={`card-hover fade-up${inView?' in':''}`}
-              style={{borderRadius:18,overflow:'hidden',background:grad,transitionDelay:`${i*70}ms`,boxShadow:'0 16px 48px rgba(0,0,0,0.28)'}}>
+              style={{borderRadius:18,overflow:'hidden',background:grad,transitionDelay:`${i*70}ms`,
+                boxShadow: light ? '0 16px 48px rgba(0,0,0,0.10)' : '0 16px 48px rgba(0,0,0,0.28)'}}>
               <div style={{padding:'26px 22px 24px'}}>
-                <div style={{fontSize:44,fontWeight:900,color:'rgba(255,255,255,0.07)',lineHeight:1,letterSpacing:'-0.05em',marginBottom:18}}>{n}</div>
+                <div style={{fontSize:44,fontWeight:900,lineHeight:1,letterSpacing:'-0.05em',marginBottom:18,
+                  color: light ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.07)'}}>{n}</div>
                 <div style={{marginBottom:14}}>{icon}</div>
-                <h3 style={{fontSize:16,fontWeight:800,color:'#fff',margin:'0 0 10px',letterSpacing:'-0.02em',lineHeight:1.2,whiteSpace:'pre-line'}}>{title}</h3>
-                <p style={{fontSize:13,color:'rgba(255,255,255,0.68)',lineHeight:1.65,margin:0}}>{desc}</p>
+                <h3 style={{fontSize:16,fontWeight:800,margin:'0 0 10px',letterSpacing:'-0.02em',lineHeight:1.2,whiteSpace:'pre-line',
+                  color: light ? '#1c1917' : '#fff'}}>{title}</h3>
+                <p style={{fontSize:13,lineHeight:1.65,margin:0,
+                  color: light ? 'rgba(28,25,23,0.62)' : 'rgba(255,255,255,0.68)'}}>{desc}</p>
               </div>
             </div>
           ))}
@@ -696,7 +703,7 @@ const DEMO_INDICATORS = [
   {type:'warn',   label:'Sin personalización', detail:'Los correos reales incluyen tu nombre completo'},
 ]
 
-function DetectorSection({ t }) {
+function DetectorSection({ t, onDetect }) {
   const [ref, inView] = useInView()
   const [demoKey, setDemoKey] = useState(0)
   const [demoPhase, setDemoPhase] = useState(0)
@@ -740,7 +747,7 @@ function DetectorSection({ t }) {
               ))}
             </div>
             <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
-              <Btn t={t} variant="primary" style={{fontSize:14,padding:'13px 26px'}}>Acceder al Detector →</Btn>
+              <Btn t={t} variant="primary" onClick={onDetect} style={{fontSize:14,padding:'13px 26px'}}>Acceder al Detector →</Btn>
               <span style={{fontSize:12,color:t.sub,fontWeight:500}}>Beta · Gratis</span>
             </div>
           </div>
@@ -898,7 +905,7 @@ function Footer({ t }) {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export function LandingPage({ onStart, onHost }) {
+export function LandingPage({ onStart, onHost, onDetect }) {
   const [dark, setDark] = useState(false)
   const t = mkTheme(dark, 'indigo')
 
@@ -909,7 +916,7 @@ export function LandingPage({ onStart, onHost }) {
       <Hero t={t} onStart={onStart} onHost={onHost} />
       <Features t={t} />
       <MultiplayerSection t={t} />
-      <DetectorSection t={t} />
+      <DetectorSection t={t} onDetect={onDetect} />
       <HowItWorks t={t} />
       <CTASection t={t} onStart={onStart} onHost={onHost} />
       <Footer t={t} />

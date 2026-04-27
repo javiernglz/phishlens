@@ -4,7 +4,11 @@
 
 body {
   margin: 0;
-  overflow: hidden;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+.simulator-root {
+  overflow: hidden;
+  height: 100vh;
 }

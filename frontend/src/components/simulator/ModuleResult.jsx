@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 const TIERS = [
-  { min: 1.0,  label: '¡Sin fisuras!',   sub: 'No te engañaron ni una sola vez.',          color: '#22d3ee' },
+  { min: 1.0,  label: '¡Sin fisuras!',   sub: 'No te engañaron ni una sola vez.',          color: '#6366f1' },
   { min: 0.8,  label: '¡Muy bien!',       sub: 'Casi a prueba de phishing.',                color: '#34d399' },
   { min: 0.6,  label: 'Puedes mejorar.',  sub: 'Algunos escenarios te engañaron.',          color: '#fbbf24' },
   { min: 0,    label: 'Cuidado.',         sub: 'Los atacantes habrían ganado esta vez.',    color: '#f87171' },
@@ -116,8 +116,8 @@ export function ModuleResult({ dark = true, moduleLabel, moduleScenarios, answer
               onClick={onNextModule}
               className={`flex-1 py-2.5 rounded-lg border text-sm font-semibold transition-all ${
                 dark
-                  ? 'bg-cyan-950 border-cyan-700 text-cyan-300 hover:bg-cyan-900'
-                  : 'bg-cyan-600 border-cyan-600 text-white hover:bg-cyan-700'
+                  ? 'bg-indigo-950 border-indigo-700 text-indigo-300 hover:bg-indigo-900'
+                  : 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
               }`}
             >
               Siguiente →

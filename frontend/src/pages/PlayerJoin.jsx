@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HookIcon } from '../components/ui/PhishLensLogo'
+import { WordMark } from '../components/ui/PhishLensLogo'
 
 export function PlayerJoin() {
   const [code, setCode] = useState('')
@@ -17,18 +17,14 @@ export function PlayerJoin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d1117] flex flex-col items-center justify-center px-6">
-      <div className="flex items-center gap-2.5 mb-10">
-        <HookIcon size={32} color="#22d3ee" strokeWidth={2.2} />
-        <span className="text-2xl font-bold text-slate-100 tracking-tight">PhishLens</span>
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6">
+      <div className="mb-10">
+        <WordMark size={22} dark={false} />
       </div>
 
-      <form
-        onSubmit={handleJoin}
-        className="w-full max-w-sm flex flex-col gap-4"
-      >
+      <form onSubmit={handleJoin} className="w-full max-w-sm flex flex-col gap-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
             Tu nombre
           </label>
           <input
@@ -37,12 +33,12 @@ export function PlayerJoin() {
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Carlos"
             maxLength={20}
-            className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/40 transition-colors"
+            className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3.5 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
             Código de sala
           </label>
           <input
@@ -52,19 +48,19 @@ export function PlayerJoin() {
             placeholder="EAGLE-4821"
             autoFocus
             required
-            className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3.5 text-cyan-300 placeholder-slate-600 text-xl font-mono tracking-widest text-center focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/40 transition-colors uppercase"
+            className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3.5 text-indigo-600 placeholder-slate-400 text-xl font-mono tracking-widest text-center focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors uppercase"
           />
         </div>
 
         <button
           type="submit"
-          className="mt-2 w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm tracking-wide transition-colors"
+          className="mt-2 w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm tracking-wide transition-colors"
         >
-          Unirme a la sala
+          Unirme a la sala →
         </button>
       </form>
 
-      <p className="mt-8 text-xs text-slate-600 text-center">
+      <p className="mt-8 text-xs text-slate-400 text-center">
         El presentador compartirá el código contigo
       </p>
     </div>

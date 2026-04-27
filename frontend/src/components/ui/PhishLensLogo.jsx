@@ -1,5 +1,5 @@
 // Hook icon — standalone use (sidebar, player pages, etc.)
-export function HookIcon({ size = 24, color = '#22d3ee', strokeWidth = 2 }) {
+export function HookIcon({ size = 24, color = '#6366f1', strokeWidth = 2 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -38,8 +38,8 @@ function HookI({ size, color }) {
 
 // Wordmark: Ph[hook-i]shLens — the hook replaces the "i"
 export function WordMark({ size = 18, dark = true, className = '' }) {
-  const main  = dark ? '#f1f5f9' : '#0f172a'
-  const cyan  = '#22d3ee'
+  const main   = dark ? '#f1f5f9' : '#0f172a'
+  const indigo = '#6366f1'
   const style = {
     display: 'inline-flex',
     alignItems: 'flex-end',
@@ -52,9 +52,9 @@ export function WordMark({ size = 18, dark = true, className = '' }) {
   return (
     <span className={className} style={style}>
       <span style={{ color: main }}>Ph</span>
-      <HookI size={size} color={cyan} />
+      <HookI size={size} color={indigo} />
       <span style={{ color: main }}>sh</span>
-      <span style={{ color: cyan, fontWeight: 300 }}>Lens</span>
+      <span style={{ color: indigo, fontWeight: 300 }}>Lens</span>
     </span>
   )
 }

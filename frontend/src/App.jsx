@@ -8,6 +8,7 @@ import { LandingPage } from './components/LandingPage'
 import { HostRoom } from './pages/HostRoom'
 import { PlayerJoin } from './pages/PlayerJoin'
 import { PlayerRoom } from './pages/PlayerRoom'
+import { DetectorPage } from './pages/DetectorPage'
 import { MODULES } from './data'
 import { generateRoomCode } from './lib/roomUtils'
 
@@ -38,6 +39,7 @@ function SoloApp() {
       <LandingPage
         onStart={() => setStarted(true)}
         onHost={() => navigate('/host-setup')}
+        onDetect={() => navigate('/detect')}
       />
     )
   }
@@ -54,7 +56,7 @@ function SoloApp() {
   })
 
   return (
-    <div className={`flex h-screen overflow-hidden ${dark ? 'bg-slate-950' : 'bg-slate-100'}`}>
+    <div className={`simulator-root flex ${dark ? 'bg-slate-950' : 'bg-slate-100'}`}>
       <Sidebar
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}
@@ -111,6 +113,7 @@ export default function App() {
         <Route path="/host/:code" element={<HostRoom />} />
         <Route path="/join" element={<PlayerJoin />} />
         <Route path="/join/:code" element={<PlayerRoom />} />
+        <Route path="/detect" element={<DetectorPage />} />
       </Routes>
     </BrowserRouter>
   )

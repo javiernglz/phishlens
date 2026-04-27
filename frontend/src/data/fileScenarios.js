@@ -70,6 +70,39 @@ export const fileScenarios = [
   // ─── MEDIUM ──────────────────────────────────────────────────────────────
 
   {
+    id: 'file-legit-medium-001',
+    module: 'file',
+    isPhishing: false,
+    level: 'medium',
+    title: 'ZIP de Fotos del Evento',
+    description: 'Archivo comprimido legítimo — tamaño y contenido coherentes con fotos reales',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'orden_del_dia_mayo.pdf', icon: 'pdf', size: '412 KB', date: '24/04/2026', kind: 'Documento PDF', safe: true },
+        {
+          name: 'Fotos_Evento_Empresa_Abril2026.zip',
+          icon: 'zip',
+          size: '84.3 MB',
+          date: '25/04/2026',
+          kind: 'Archivo comprimido',
+          safe: true,
+          id: 'hs-file',
+        },
+        { name: 'acta_reunion_q1.docx', icon: 'word', size: '72 KB', date: '22/04/2026', kind: 'Documento Word', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'ZIP Legítimo — Tamaño y Contexto Coherentes',
+        severity: 'safe',
+        explanation: 'Un ZIP no es intrínsecamente peligroso — es un contenedor. 84 MB es coherente con fotos de alta resolución. Los ZIP maliciosos suelen pesar menos de 5 MB y contener ejecutables. Antes de extraer cualquier ZIP, comprueba su contenido sin descomprimirlo: clic derecho → "Ver contenido" en macOS o "Abrir con" el explorador en Windows.',
+      },
+    ],
+  },
+
+  {
     id: 'file-medium-001',
     module: 'file',
     isPhishing: true,
@@ -133,6 +166,74 @@ export const fileScenarios = [
         label: 'Extensión .xlsm — Macros Embebidas',
         severity: 'danger',
         explanation: '".xlsm" es un Excel con macros — código que se ejecuta dentro del documento. El tipo "Hoja de cálculo con macros" lo confirma en el Finder. Ninguna factura legítima necesita macros para mostrarse. Si Excel te muestra la barra amarilla "Habilitar contenido", cierra el archivo y pide al proveedor un PDF o un .xlsx estándar.',
+      },
+    ],
+  },
+
+  {
+    id: 'file-medium-003',
+    module: 'file',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Imagen de Disco ISO Infectada',
+    description: 'ISO con ejecutable dentro — técnica moderna para saltarse filtros de email',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'contrato_nda_firmado.pdf', icon: 'pdf', size: '398 KB', date: '24/04/2026', kind: 'Documento PDF', safe: true },
+        {
+          name: 'Adobe_Acrobat_License_2026.iso',
+          icon: 'generic',
+          size: '1.3 MB',
+          date: '25/04/2026',
+          kind: 'Imagen de disco',
+          safe: false,
+          id: 'hs-file',
+          note: 'El ISO contiene un único ejecutable. Al montarlo, Windows lo trata como unidad de confianza, saltándose los filtros Mark of the Web de Outlook y Edge.',
+        },
+        { name: 'licencias_software_2026.pdf', icon: 'pdf', size: '214 KB', date: '20/04/2026', kind: 'Documento PDF', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'ISO — Técnica para Saltarse Filtros de Email',
+        severity: 'danger',
+        explanation: 'Los .iso son un vector de ataque moderno. Outlook bloqueaba los .exe adjuntos, así que los atacantes los empaquetan en imágenes de disco. Al montar un ISO, Windows lo trata como unidad de confianza y el ejecutable no hereda la etiqueta de riesgo "Descargado de Internet". Además, una licencia de software legítima nunca llega como imagen de disco.',
+      },
+    ],
+  },
+
+  {
+    id: 'file-medium-004',
+    module: 'file',
+    isPhishing: true,
+    level: 'medium',
+    title: 'Acceso Directo con Icono Excel (.lnk)',
+    description: 'Archivo .lnk camuflado — Windows oculta la extensión y el usuario ve un Excel falso',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'notas_reunion_25abr.docx', icon: 'word', size: '91 KB', date: '25/04/2026', kind: 'Documento Word', safe: true },
+        {
+          name: 'Presupuesto_Final_2026.xlsx.lnk',
+          icon: 'excel',
+          size: '2 KB',
+          date: '25/04/2026',
+          kind: 'Acceso directo',
+          safe: false,
+          id: 'hs-file',
+          note: 'Windows oculta .lnk (extensión conocida) y muestra "Presupuesto_Final_2026.xlsx" con icono de Excel. El archivo ejecuta PowerShell que descarga malware.',
+        },
+        { name: 'catalogo_productos_q2.pdf', icon: 'pdf', size: '2.4 MB', date: '23/04/2026', kind: 'Documento PDF', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'Acceso Directo .lnk — Dos Señales Visibles',
+        severity: 'danger',
+        explanation: 'Dos pistas delatan el fraude en esta vista: el Tipo dice "Acceso directo" en lugar de "Hoja de cálculo", y el tamaño es solo 2 KB — un Excel real pesaría decenas de KB mínimo. En Windows, la extensión .lnk se oculta por defecto y el usuario solo ve el icono de Excel. Los accesos directos pueden ejecutar cualquier comando del sistema operativo.',
       },
     ],
   },
@@ -206,4 +307,71 @@ export const fileScenarios = [
     ],
   },
 
+
+  {
+    id: 'file-hard-002',
+    module: 'file',
+    isPhishing: true,
+    level: 'hard',
+    title: 'Carta de Oferta de Trabajo (.docm)',
+    description: 'Word habilitado para macros disfrazado de oferta laboral confidencial',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'CV_actualizado_2026.pdf', icon: 'pdf', size: '290 KB', date: '24/04/2026', kind: 'Documento PDF', safe: true },
+        {
+          name: 'Oferta_Trabajo_Confidencial_RRHH.docm',
+          icon: 'word',
+          size: '3.1 MB',
+          date: '25/04/2026',
+          kind: 'Documento Word habilitado para macros',
+          safe: false,
+          id: 'hs-file',
+          note: 'Al abrirse, Word muestra "Este documento contiene macros — Habilitar contenido para ver la oferta". Las macros descargan y ejecutan un payload.',
+        },
+        { name: 'referencias_laborales.pdf', icon: 'pdf', size: '156 KB', date: '22/04/2026', kind: 'Documento PDF', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'Extensión .docm — Word con Macros',
+        severity: 'danger',
+        explanation: '".docm" es el equivalente de ".xlsm" pero para Word: un documento con macros activas. Ninguna carta de oferta de trabajo necesita macros — el contenido legítimo usa .pdf o .docx estándar. Si Word muestra la barra amarilla "Habilitar contenido", el documento quiere ejecutar código. Cierra el archivo y pide al remitente un PDF.',
+      },
+    ],
+  },
+
+  {
+    id: 'file-legit-hard-002',
+    module: 'file',
+    isPhishing: false,
+    level: 'hard',
+    title: 'Instalador de Chrome (.exe)',
+    description: 'Ejecutable legítimo descargado del sitio oficial — la fuente importa más que la extensión',
+    content: {
+      folderName: 'Descargas',
+      files: [
+        { name: 'presupuesto_obras_mayo.pdf', icon: 'pdf', size: '1.1 MB', date: '24/04/2026', kind: 'Documento PDF', safe: true },
+        {
+          name: 'ChromeSetup.exe',
+          icon: 'exe',
+          size: '1.3 MB',
+          date: '25/04/2026',
+          kind: 'Aplicación',
+          safe: true,
+          id: 'hs-file',
+        },
+        { name: 'acta_comunidad_abril.pdf', icon: 'pdf', size: '204 KB', date: '21/04/2026', kind: 'Documento PDF', safe: true },
+      ],
+    },
+    hotspots: [
+      {
+        targetId: 'hs-file',
+        label: 'Ejecutable Legítimo — La Fuente es la Clave',
+        severity: 'safe',
+        explanation: 'Un .exe no es siempre malware — todo instalador de Windows es un ejecutable. La diferencia es la fuente: "ChromeSetup.exe" descargado directamente de google.com/chrome es seguro. El mismo archivo recibido por email no solicitado sería una señal de alerta. Antes de ejecutar cualquier instalador verifica: ¿lo descargué yo del sitio oficial? ¿El tamaño es coherente con lo que esperaba?',
+      },
+    ],
+  },
 ]

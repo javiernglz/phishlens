@@ -5,16 +5,15 @@ import { ALL_SCENARIOS, MODULES } from '../../data'
 
 const MODULE_ICONS = { email: Mail, sms: MessageCircle, file: FolderOpen }
 
-function ScoreBadge({ correct, answered, total }) {
+function ScoreBadge({ correct, answered, total, dark }) {
   if (answered === 0) return null
-  const allDone = answered === total
-  const perfect = correct === total && allDone
+  const perfect = correct === total && answered === total
   return (
     <span
       className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-1 ${
         perfect
-          ? 'bg-emerald-900 text-emerald-300'
-          : 'bg-slate-800 text-slate-400'
+          ? dark ? 'bg-emerald-900 text-emerald-300' : 'bg-emerald-100 text-emerald-700'
+          : dark ? 'bg-slate-800 text-slate-400'      : 'bg-slate-100 text-slate-500'
       }`}
     >
       {correct}/{total}
@@ -67,7 +66,7 @@ export function Sidebar({
               title={`${m.label} — ${score.correct}/${score.total}`}
               className={`p-2 rounded-md transition-colors relative ${
                 activeModule === m.id
-                  ? 'text-cyan-500 bg-cyan-950/50'
+                  ? dark ? 'text-indigo-400 bg-indigo-950/50' : 'text-indigo-600 bg-indigo-50'
                   : dark
                   ? 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'
                   : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
@@ -75,7 +74,9 @@ export function Sidebar({
             >
               <Icon size={16} />
               {score.answered > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-900 text-emerald-300 text-[7px] font-bold flex items-center justify-center">
+                <span className={`absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full text-[7px] font-bold flex items-center justify-center ${
+                  dark ? 'bg-emerald-900 text-emerald-300' : 'bg-emerald-100 text-emerald-700'
+                }`}>
                   {score.correct}
                 </span>
               )}
@@ -147,7 +148,7 @@ export function Sidebar({
               onClick={() => onModuleSelect(m.id)}
               className={`flex-1 flex flex-col items-center gap-0.5 pt-2 pb-1.5 text-[10px] font-semibold tracking-wide transition-colors border-b-2 ${
                 activeModule === m.id
-                  ? 'text-cyan-500 border-cyan-500'
+                  ? 'text-indigo-600 border-indigo-600'
                   : dark
                   ? 'text-slate-600 border-transparent hover:text-slate-400 hover:border-slate-600'
                   : 'text-slate-400 border-transparent hover:text-slate-600 hover:border-slate-300'
@@ -155,7 +156,7 @@ export function Sidebar({
             >
               <Icon size={14} />
               <span>{m.shortLabel}</span>
-              <ScoreBadge {...score} />
+              <ScoreBadge {...score} dark={dark} />
             </button>
           )
         })}

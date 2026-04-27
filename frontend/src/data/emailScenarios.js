@@ -5,7 +5,7 @@ export const emailScenarios = [
     id: 'email-legit-easy-001',
     module: 'email',
     isPhishing: false,
-    level: 'Fácil',
+    level: 'easy',
     title: 'Newsletter El País',
     description: 'Boletín de noticias legítimo con subdominio correcto',
     content: {
@@ -70,7 +70,7 @@ export const emailScenarios = [
     id: 'email-easy-001',
     module: 'email',
     isPhishing: true,
-    level: 'Fácil',
+    level: 'easy',
     title: 'Premio de Lotería',
     description: 'Correo de premio falso con errores evidentes',
     content: {
@@ -145,7 +145,7 @@ export const emailScenarios = [
     id: 'email-medium-001',
     module: 'email',
     isPhishing: true,
-    level: 'Medio',
+    level: 'medium',
     title: 'Alerta de Seguridad Google',
     description: 'Suplantación de Google con dominio homógrafo',
     content: {
@@ -219,7 +219,7 @@ export const emailScenarios = [
     id: 'email-legit-medium-001',
     module: 'email',
     isPhishing: false,
-    level: 'Medio',
+    level: 'medium',
     title: 'Alerta Real de Google',
     description: 'Notificación genuina de Google desde accounts.google.com',
     content: {
@@ -293,7 +293,7 @@ export const emailScenarios = [
     id: 'email-medium-002',
     module: 'email',
     isPhishing: true,
-    level: 'Medio',
+    level: 'medium',
     title: 'Contraseña Microsoft 365',
     description: 'Alerta de caducidad de contraseña — suplantación de Microsoft',
     content: {
@@ -361,7 +361,7 @@ export const emailScenarios = [
     id: 'email-legit-hard-001',
     module: 'email',
     isPhishing: false,
-    level: 'Difícil',
+    level: 'hard',
     title: 'Aviso de Mantenimiento TI',
     description: 'Comunicado interno de IT que podría confundirse con phishing',
     content: {
@@ -413,7 +413,7 @@ export const emailScenarios = [
     id: 'email-hard-001',
     module: 'email',
     isPhishing: true,
-    level: 'Difícil',
+    level: 'hard',
     title: 'Spear Phishing de RRHH',
     description: 'Ataque dirigido con contexto interno y urgencia psicológica',
     content: {
@@ -467,7 +467,7 @@ export const emailScenarios = [
     id: 'email-hard-002',
     module: 'email',
     isPhishing: true,
-    level: 'Difícil',
+    level: 'hard',
     title: 'DocuSign — Documento Pendiente',
     description: 'Suplantación de DocuSign para robar credenciales corporativas',
     content: {

@@ -10,10 +10,22 @@ const VIEWS = {
   file: FileView,
 }
 
-const LEVEL_STYLES = {
-  easy:   { label: 'Fácil',   className: 'bg-emerald-950 text-emerald-400 border-emerald-800' },
-  medium: { label: 'Medio',   className: 'bg-amber-950 text-amber-400 border-amber-800' },
-  hard:   { label: 'Difícil', className: 'bg-rose-950 text-rose-400 border-rose-800' },
+const LEVEL_LABELS = {
+  easy:   'Fácil',
+  medium: 'Medio',
+  hard:   'Difícil',
+}
+
+const LEVEL_DARK = {
+  easy:   'bg-emerald-950 text-emerald-400 border-emerald-800',
+  medium: 'bg-amber-950 text-amber-400 border-amber-800',
+  hard:   'bg-rose-950 text-rose-400 border-rose-800',
+}
+
+const LEVEL_LIGHT = {
+  easy:   'bg-emerald-50 text-emerald-700 border-emerald-300',
+  medium: 'bg-amber-50 text-amber-700 border-amber-300',
+  hard:   'bg-rose-50 text-rose-700 border-rose-300',
 }
 
 const DOT_STYLES = {
@@ -29,7 +41,9 @@ const DOT_STYLES_DARK = {
 }
 
 function StageHeader({ scenario, moduleProgress, dark }) {
-  const level = LEVEL_STYLES[scenario.level] ?? LEVEL_STYLES.easy
+  const key = LEVEL_LABELS[scenario.level] ? scenario.level : 'easy'
+  const levelLabel = LEVEL_LABELS[key]
+  const levelClass = dark ? LEVEL_DARK[key] : LEVEL_LIGHT[key]
   const activeIndex = moduleProgress.findIndex((p) => p.isActive)
   const total = moduleProgress.length
   const dots = dark ? DOT_STYLES_DARK : DOT_STYLES
@@ -39,8 +53,8 @@ function StageHeader({ scenario, moduleProgress, dark }) {
       dark ? 'bg-[#0d1117] border-slate-800' : 'bg-white border-slate-200'
     }`}>
       <div className="flex items-center gap-2 min-w-0">
-        <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex-shrink-0 ${level.className}`}>
-          {level.label}
+        <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex-shrink-0 ${levelClass}`}>
+          {levelLabel}
         </span>
         <span className={`text-xs truncate ${dark ? 'text-slate-400' : 'text-slate-500'}`}>
           {scenario.title}
@@ -54,7 +68,7 @@ function StageHeader({ scenario, moduleProgress, dark }) {
               key={p.id}
               className={`block rounded-full transition-all duration-200 ${
                 p.isActive
-                  ? 'w-3.5 h-2 bg-cyan-500'
+                  ? 'w-3.5 h-2 bg-indigo-500'
                   : `w-2 h-2 ${dots[p.status]}`
               }`}
             />
@@ -118,8 +132,8 @@ function VotingBar({ scenario, answer, onVote, onNext, hasNext, isModuleComplete
             onClick={onShowResults}
             className={`flex-shrink-0 px-4 py-1.5 rounded-lg border text-xs font-bold transition-all ${
               dark
-                ? 'bg-cyan-950 border-cyan-700 text-cyan-300 hover:bg-cyan-900'
-                : 'bg-cyan-600 border-cyan-600 text-white hover:bg-cyan-700'
+                ? 'bg-indigo-950 border-indigo-700 text-indigo-300 hover:bg-indigo-900'
+                : 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
             }`}
           >
             Ver resultados →
